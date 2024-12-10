@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- Affiche l'entête uniquement si l'utilisateur est authentifié -->
-    <AppHeader v-if="isAuthenticated" />
+    <Header v-if="isAuthenticated" />
 
     <!-- Navigation conditionnelle : affichée seulement si connecté -->
     <nav v-if="isAuthenticated">
@@ -12,124 +12,47 @@
       </ul>
     </nav>
 
-    <!-- Contenu principal -->
-    <router-view />
+    <!-- Contenu principal : Affiche le formulaire de signalement et la carte -->
+    <div v-if="isAuthenticated">
+      <h2>Signaler un problème</h2>
+      <ReportForm />  <!-- Le composant du formulaire -->
+      <MapComponent />         <!-- Le composant de la carte interactive -->
+    </div>
 
     <!-- Pied de page affiché uniquement si authentifié -->
-    <AppFooter v-if="isAuthenticated" />
+    <Footer v-if="isAuthenticated" />
   </div>
 </template>
 
 <script>
-import AppHeader from "./components/Header.vue"; // Chemin vers Header.vue
-import AppFooter from "./components/Footer.vue"; // Chemin vers Footer.vue
-
-export default {
-  name: "App",
-  components: {
-    AppHeader,
-    AppFooter,
-  },
-  data() {
-    return {
-      isAuthenticated: false, // Suivi de l'état de connexion
-    };
-  },
-  created() {
-    // Vérifie si l'utilisateur est connecté
-    this.isAuthenticated = !!localStorage.getItem("username");
-  },
-  methods: {
-    updateAuthState() {
-      this.isAuthenticated = !!localStorage.getItem("username");
-    },
-  },
-  mounted() {
-    // Met à jour l'état si localStorage change (utile pour des déconnexions externes)
-    window.addEventListener("storage", this.updateAuthState);
-  },
-  beforeUnmount() {
-    window.removeEventListener("storage", this.updateAuthState);
-  },
-};
-</script>
-
-<style>
-/* Styles globaux pour l'application */
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* Facultatif : ajouter un style de base pour router-view */
-router-view {
-  flex: 1;
-}
-</style>
-
-
-
-
-
-
-<!-- <template>
-
-  <div id="app">
-    <AppHeader />
-    <nav>
-      <ul v-if="isAuthenticated">
-        <li><router-link to="/challenges">Défis</router-link></li>
-        <li><router-link to="/form">Formulaire</router-link></li>
-        <li><router-link to="/stats">Statistiques</router-link></li>
-      </ul>
-    </nav>
-    <router-view />
-    <AppFooter />
-  </div>
-  
-</template>
-
-<script>
-
-import AppHeader from "./components/Header.vue"; // Chemin vers votre fichier Header.vue
-import AppFooter from "./components/Footer.vue"; // Chemin vers votre fichier Footer.vue
-
+import Header from './components/Header.vue';
+import ReportForm from './components/ReportForm.vue';
+import MapComponent from './components/MapComponent.vue';
+import Footer from './components/Footer.vue';
 
 export default {
   name: 'App',
   components: {
-    AppHeader,
-    AppFooter,
+    Header,
+    ReportForm,
+    MapComponent,
+    Footer,
   },
-
   data() {
     return {
-      isAuthenticated: false, // État pour suivre la connexion
+      isAuthenticated: true, // initialisez à false ou récupérez de votre système d'authentification (false pour voir que la personne c'est vriment authentifié)
     };
   },
   created() {
-    // Vérifie si l'utilisateur est connecté
-    this.isAuthenticated = !!localStorage.getItem("username");
+    // Logique d'authentification : vérification de l'existence d'un token (exemple avec localStorage)
+    const token = localStorage.getItem('auth_token');  // Récupérer un token depuis le stockage local
+    if (token) {
+      this.isAuthenticated = true; // Si un token existe, on considère que l'utilisateur est authentifié
+    }
   },
 };
-
-
-
 </script>
 
-<style>
-/* Styles globaux pour l'application */
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* Facultatif : ajouter un style de base pour router-view */
-router-view {
-  flex: 1;
-}
-
-/* Ajout d’un espace de style global si nécessaire */
-</style> -->
+<style scoped>
+/* Ajoutez vos styles ici */
+</style>

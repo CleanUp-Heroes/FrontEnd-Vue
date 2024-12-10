@@ -29,24 +29,23 @@ export default {
       form: {
         description: '',
         location: '',
-        photo: null
-      }
+        photo: null,
+      },
     };
   },
   methods: {
     handleFileUpload(event) {
-      this.form.photo = event.target.files[0];  // Sauvegarde la photo téléchargée
+      this.form.photo = event.target.files[0]; // Sauvegarde la photo téléchargée
     },
     submitForm() {
       console.log('Formulaire soumis:', this.form);
-      // Ici, vous pouvez ajouter la logique pour envoyer les données à une API backend
-    }
-  }
+      // Ajoutez la logique pour envoyer les données à l'API backend
+    },
+  },
 };
 </script>
 
 <style scoped>
-/* Style pour le formulaire */
 form {
   display: flex;
   flex-direction: column;
