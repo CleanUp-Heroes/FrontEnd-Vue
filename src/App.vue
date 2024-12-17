@@ -4,16 +4,33 @@
     <AppHeader v-if="isAuthenticated" />
 
     <!-- Navigation conditionnelle : affichée seulement si connecté -->
-    <nav v-if="isAuthenticated">
+    <nav v-if="isAuthenticated" class="vertical-navigation">
       <ul>
-        <li><router-link to="/challenges">Défis</router-link></li>
-        <li><router-link to="/form">Formulaire</router-link></li>
-        <li><router-link to="/stats">Statistiques</router-link></li>
+        <li>
+          <button @click="toggleMenu('challenges')">Défis</button>
+          <ul v-if="activeMenu === 'challenges'">
+            <li><router-link to="/challenges">Tous les défis</router-link></li>
+          </ul>
+        </li>
+        <li>
+          <button @click="toggleMenu('form')">Formulaire</button>
+          <ul v-if="activeMenu === 'form'">
+            <li><router-link to="/form">Soumettre un formulaire</router-link></li>
+          </ul>
+        </li>
+        <li>
+          <button @click="toggleMenu('stats')">Statistiques</button>
+          <ul v-if="activeMenu === 'stats'">
+            <li><router-link to="/stats">Voir les statistiques</router-link></li>
+          </ul>
+        </li>
       </ul>
     </nav>
 
     <!-- Contenu principal -->
-    <router-view />
+    <main class="main-content">
+      <router-view />
+    </main>
 
     <!-- Pied de page affiché uniquement si authentifié -->
     <AppFooter v-if="isAuthenticated" />
@@ -21,8 +38,8 @@
 </template>
 
 <script>
-import AppHeader from "./components/Header.vue"; // Chemin vers Header.vue
-import AppFooter from "./components/Footer.vue"; // Chemin vers Footer.vue
+import AppHeader from "./components/Header.vue";
+import AppFooter from "./components/Footer.vue";
 
 export default {
   name: "App",
@@ -33,19 +50,21 @@ export default {
   data() {
     return {
       isAuthenticated: false, // Suivi de l'état de connexion
+      activeMenu: null, // Permet de savoir quel menu est ouvert
     };
   },
   created() {
-    // Vérifie si l'utilisateur est connecté
     this.isAuthenticated = !!localStorage.getItem("username");
   },
   methods: {
     updateAuthState() {
       this.isAuthenticated = !!localStorage.getItem("username");
     },
+    toggleMenu(menu) {
+      this.activeMenu = this.activeMenu === menu ? null : menu;
+    },
   },
   mounted() {
-    // Met à jour l'état si localStorage change (utile pour des déconnexions externes)
     window.addEventListener("storage", this.updateAuthState);
   },
   beforeUnmount() {
@@ -54,82 +73,72 @@ export default {
 };
 </script>
 
-<style>
-/* Styles globaux pour l'application */
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+<style scoped>
+/* Conteneur général de la navigation */
+.vertical-navigation {
+  background-color: #38bd94;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 200px;
 }
 
-/* Facultatif : ajouter un style de base pour router-view */
-router-view {
+.vertical-navigation ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.vertical-navigation li {
+  margin-bottom: 1rem;
+}
+
+.vertical-navigation button {
+  background-color: #1a6f4b;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  width: 100%;
+  text-align: left;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.vertical-navigation button:hover {
+  background-color: #145d3c;
+}
+
+.vertical-navigation ul ul {
+  margin-top: 0.5rem;
+  padding-left: 1.5rem;
+}
+
+.vertical-navigation ul ul li {
+  margin-bottom: 0.5rem;
+}
+
+.vertical-navigation ul ul a {
+  text-decoration: none;
+  color: white;
+  padding: 0.5rem;
+  display: block;
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
+}
+
+.vertical-navigation ul ul a:hover {
+  background-color: #38bd94;
+}
+
+/* Contenu principal */
+.main-content {
   flex: 1;
+  padding: 2rem;
+  background-color: #ffffff;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
-
-
-
-
-
-
-<!-- <template>
-
-  <div id="app">
-    <AppHeader />
-    <nav>
-      <ul v-if="isAuthenticated">
-        <li><router-link to="/challenges">Défis</router-link></li>
-        <li><router-link to="/form">Formulaire</router-link></li>
-        <li><router-link to="/stats">Statistiques</router-link></li>
-      </ul>
-    </nav>
-    <router-view />
-    <AppFooter />
-  </div>
-  
-</template>
-
-<script>
-
-import AppHeader from "./components/Header.vue"; // Chemin vers votre fichier Header.vue
-import AppFooter from "./components/Footer.vue"; // Chemin vers votre fichier Footer.vue
-
-
-export default {
-  name: 'App',
-  components: {
-    AppHeader,
-    AppFooter,
-  },
-
-  data() {
-    return {
-      isAuthenticated: false, // État pour suivre la connexion
-    };
-  },
-  created() {
-    // Vérifie si l'utilisateur est connecté
-    this.isAuthenticated = !!localStorage.getItem("username");
-  },
-};
-
-
-
-</script>
-
-<style>
-/* Styles globaux pour l'application */
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* Facultatif : ajouter un style de base pour router-view */
-router-view {
-  flex: 1;
-}
-
-/* Ajout d’un espace de style global si nécessaire */
-</style> -->
