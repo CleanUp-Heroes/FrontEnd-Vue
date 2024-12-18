@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import ReportForm from '../components/ReportForm.vue'; // Page du formulaire
 import Map from '../components/Map.vue'; // Page de la carte
+import MapPage from '../components/MapPage.vue';
 
 const routes = [
   {
@@ -14,6 +15,12 @@ const routes = [
     component: Map,
   },
   // Ajoutez d'autres routes si nécessaire
+
+  {
+    path: '/reports',
+    name: 'Reports',
+    component: MapPage,  // La page qui contient le MapComponent
+  },
 ];
 
 const router = createRouter({

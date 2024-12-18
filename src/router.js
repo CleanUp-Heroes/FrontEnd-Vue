@@ -2,8 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router';
 import challengesPage from './components/challenges/challengesPages.vue';
 import challengeForm from './components/challenges/challengeForm.vue';
 import challengeStats from './components/challenges/challengeStats.vue';
+import MapComponent from '@/components/MapComponent.vue';
 import loginPage from './components/loginPage.vue';
 import AboutPage from './components/AboutPage.vue';
+
+
 
 const routes = [
   { path: "/", redirect: "/login" }, // Redirection par défaut
@@ -17,6 +20,8 @@ const routes = [
   },
   { path: '/stats', component: challengeStats, meta: { requiresAuth: true } },
   { path: '/About', name: 'AboutPage', component: AboutPage }, 
+  { path: '/reports', component: MapComponent },
+
 ];
 
 const router = createRouter({
