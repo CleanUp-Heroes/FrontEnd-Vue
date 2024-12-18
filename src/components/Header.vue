@@ -7,7 +7,7 @@
     </div>
     <nav>
       <ul class="nav-links">
-        <li><router-link to="/">Accueil</router-link></li>
+        <li><router-link to="/Acceuil">Accueil</router-link></li>
         <li><router-link to="/reports">Carte des signalements</router-link></li>
         <li><router-link to="/login">Connexion/Inscription</router-link></li>
         <li><router-link to="/About">À propos</router-link></li>
@@ -84,7 +84,7 @@ export default {
 }
 
 .nav-links a:hover {
-  background-color: #38bd94;
+  background-color: #6dbd38;
   color: #ffffff;
 }
 
