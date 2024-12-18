@@ -26,10 +26,10 @@
     </li>
     <!-- Formulaire de Signalement -->
     <li>
-  <button @click="toggleMenu('reportForm')">Signalement</button>
-  <ul v-if="activeMenu === 'reportForm'">
-    <li><router-link to="/reportForm">Formulaire</router-link></li>
-  </ul>
+          <button @click="toggleMenu('reportForm')">Signalement</button>
+          <ul v-if="activeMenu === 'reportForm'">
+            <li><router-link to="/reportForm">Formulaire</router-link></li>
+          </ul>
 </li>
 
   </ul>
@@ -38,7 +38,6 @@
     <!-- Contenu principal -->
     <main class="main-content">
       <router-view />
-      <ReportForm /> <!-- Ajouter cette ligne pour afficher le composant MapComponent -->
     </main>
 
     <!-- Pied de page affiché uniquement si authentifié -->
@@ -47,7 +46,7 @@
 </template>
 
 <script>
-import ReportForm from "./components/ReportForm.vue";
+//import ReportForm from "./components/ReportForm.vue";
 import AppHeader from "./components/Header.vue";
 import AppFooter from "./components/Footer.vue";
 
@@ -57,7 +56,7 @@ export default {
   components: {
     AppHeader,
     AppFooter,
-    ReportForm,  //  pour déclarer le composant formulaire de signalement
+   // ReportForm,   pour déclarer le composant formulaire de signalement
   },
   data() {
     return {
