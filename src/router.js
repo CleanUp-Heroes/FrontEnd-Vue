@@ -7,6 +7,8 @@ import MapComponent from './components/MapComponent.vue';
 import ReportForm from './components/ReportForm.vue';
 import loginPage from './components/loginPage.vue';
 import AboutPage from './components/AboutPage.vue';
+import AcceuilPage from './components/AcceuilPage.vue';
+
 
 
 
@@ -29,6 +31,9 @@ const routes = [
     name: 'ReportForm',
     component: ReportForm,
   },
+
+  { path: '/Acceuil', component: AcceuilPage },
+
 
 ];
 

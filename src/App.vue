@@ -3,37 +3,43 @@
     <!-- Affiche l'entête uniquement si l'utilisateur est authentifié -->
     <AppHeader v-if="isAuthenticated" />
 
-  <!-- Navigation conditionnelle : affichée seulement si connecté -->
-<nav v-if="isAuthenticated" class="vertical-navigation">
-  <ul>
-    <li>
-      <button @click="toggleMenu('challenges')">Défis</button>
-      <ul v-if="activeMenu === 'challenges'">
-        <li><router-link to="/challenges">Tous les défis</router-link></li>
-      </ul>
-    </li>
-    <li>
-      <button @click="toggleMenu('form')">Formulaire</button>
-      <ul v-if="activeMenu === 'form'">
-        <li><router-link to="/form">Soumettre un formulaire</router-link></li>
-      </ul>
-    </li>
-    <li>
-      <button @click="toggleMenu('stats')">Statistiques</button>
-      <ul v-if="activeMenu === 'stats'">
-        <li><router-link to="/stats">Voir les statistiques</router-link></li>
-      </ul>
-    </li>
-    <!-- Formulaire de Signalement -->
-    <li>
-          <button @click="toggleMenu('reportForm')">Signalement</button>
-          <ul v-if="activeMenu === 'reportForm'">
+    <!-- Navigation conditionnelle : affichée seulement si connecté -->
+    <nav v-if="isAuthenticated" class="vertical-navigation">
+      <ul>
+        <li>
+          <button @click="toggleMenu('challenges')" class="menu-item">
+            <span class="icon">🎯</span> Défis
+          </button>
+          <ul v-if="activeMenu === 'challenges'" class="sub-menu">
+            <li><router-link to="/challenges">Tous les défis</router-link></li>
+          </ul>
+        </li>
+        <li>
+          <button @click="toggleMenu('form')" class="menu-item">
+            <span class="icon">📝</span> Formulaire
+          </button>
+          <ul v-if="activeMenu === 'form'" class="sub-menu">
+            <li><router-link to="/form">Soumettre un formulaire</router-link></li>
+          </ul>
+        </li>
+        <li>
+          <button @click="toggleMenu('stats')" class="menu-item">
+            <span class="icon">📊</span> Statistiques
+          </button>
+          <ul v-if="activeMenu === 'stats'" class="sub-menu">
+            <li><router-link to="/stats">Voir les statistiques</router-link></li>
+          </ul>
+        </li>
+        <li>
+          <button @click="toggleMenu('reportForm')" class="menu-item">
+            <span class="icon">⚠️</span> Signalement
+          </button>
+          <ul v-if="activeMenu === 'reportForm'" class="sub-menu">
             <li><router-link to="/reportForm">Formulaire</router-link></li>
           </ul>
-</li>
-
-  </ul>
-</nav>
+        </li>
+      </ul>
+    </nav>
 
     <!-- Contenu principal -->
     <main class="main-content">
@@ -46,17 +52,14 @@
 </template>
 
 <script>
-//import ReportForm from "./components/ReportForm.vue";
 import AppHeader from "./components/Header.vue";
 import AppFooter from "./components/Footer.vue";
-
 
 export default {
   name: "App",
   components: {
     AppHeader,
     AppFooter,
-   // ReportForm,   pour déclarer le composant formulaire de signalement
   },
   data() {
     return {
@@ -90,46 +93,69 @@ export default {
   background-color: #38bd94;
   padding: 1rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  width: 200px;
+  display: flex; /* Passage à un modèle de disposition flexible */
+  justify-content: space-around; /* Espacement entre les éléments */
+  align-items: center;
 }
 
+/* Liste d'éléments du menu (en ligne maintenant) */
 .vertical-navigation ul {
   list-style: none;
   margin: 0;
   padding: 0;
+  display: flex; /* Disposition horizontale */
 }
 
 .vertical-navigation li {
-  margin-bottom: 1rem;
+  margin-right: 2rem; /* Espacement entre les éléments du menu */
+  position: relative; /* Nécessaire pour que les sous-menus se positionnent correctement */
 }
 
-.vertical-navigation button {
+/* Boutons du menu */
+.menu-item {
   background-color: #1a6f4b;
   color: white;
   font-weight: bold;
   border: none;
   border-radius: 5px;
-  width: 100%;
-  text-align: left;
   padding: 0.8rem 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  font-size: 1.2rem; /* Taille de la police augmentée */
 }
 
-.vertical-navigation button:hover {
+.menu-item:hover {
   background-color: #145d3c;
+  transform: scale(1.05); /* Effet d'agrandissement */
 }
 
-.vertical-navigation ul ul {
+.menu-item .icon {
+  margin-right: 0.5rem;
+}
+
+/* Sous-menu */
+.sub-menu {
+  list-style: none;
   margin-top: 0.5rem;
   padding-left: 1.5rem;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  position: absolute;
+  background-color: #38bd94;
+  border-radius: 5px;
+  top: 100%; /* Positionnement sous le menu parent */
+  left: 0;
+  z-index: 10;
+  width: max-content; /* Ajuste la largeur du sous-menu */
 }
 
-.vertical-navigation ul ul li {
+/* Liens dans les sous-menus */
+.sub-menu li {
   margin-bottom: 0.5rem;
 }
 
-.vertical-navigation ul ul a {
+.sub-menu a {
   text-decoration: none;
   color: white;
   padding: 0.5rem;
@@ -138,8 +164,14 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.vertical-navigation ul ul a:hover {
-  background-color: #38bd94;
+.sub-menu a:hover {
+  background-color: #145d3c;
+}
+
+/* Affichage du sous-menu lorsque l'élément est actif */
+.vertical-navigation li:hover .sub-menu {
+  display: block;
+  opacity: 1;
 }
 
 /* Contenu principal */
