@@ -18,7 +18,7 @@
       <p class="switch-form-text">Pas encore de compte ? <span @click="toggleForm" class="link">S'inscrire</span></p>
     </form>
 
-    <!-- Formulaire d'Inscription -->
+    <!-- Formulaire d'Inscription   -->
     <form v-if="isSignup" @submit.prevent="signup" class="form-container">
       <h2 class="form-title">Inscription</h2>
       <div class="form-group">
