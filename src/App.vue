@@ -15,7 +15,7 @@
         <li>
           <button @click="toggleMenu('form')">Formulaire</button>
           <ul v-if="activeMenu === 'form'">
-            <li><router-link to="/form">Soumettre un formulaire</router-link></li>
+            <li><router-link to="/form">Soumettre un formulaire de participation</router-link></li>
           </ul>
         </li>
         <li>

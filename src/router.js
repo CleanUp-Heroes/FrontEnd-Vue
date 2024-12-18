@@ -10,10 +10,8 @@ const routes = [
   { path: '/login', component: loginPage },
   { path: '/Page', component: challengesPage, meta: { requiresAuth: true } },
   { 
-    path: '/form/:challengeId',  // Route dynamique avec l'ID du défi
-    component: challengeForm,
-    meta: { requiresAuth: true },
-    props: true // Permet de passer challengeId comme prop au composant
+    path: '/form',  // Route statique pour le formulaire
+    component: challengeForm, meta: { requiresAuth: true },
   },
   { path: '/stats', component: challengeStats, meta: { requiresAuth: true } },
   { path: '/About', name: 'AboutPage', component: AboutPage }, 
