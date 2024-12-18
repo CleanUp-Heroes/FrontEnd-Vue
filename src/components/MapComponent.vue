@@ -6,7 +6,7 @@
 import L from 'leaflet'; // Importation de Leaflet
 
 export default {
-  name: 'MapComponent', // Assurez-vous d'avoir un nom de composant valide
+  name: 'MapComponent', // nom de composant valide
 
   mounted() {
     // Initialisation de la carte

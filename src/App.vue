@@ -3,33 +3,42 @@
     <!-- Affiche l'entête uniquement si l'utilisateur est authentifié -->
     <AppHeader v-if="isAuthenticated" />
 
-    <!-- Navigation conditionnelle : affichée seulement si connecté -->
-    <nav v-if="isAuthenticated" class="vertical-navigation">
-      <ul>
-        <li>
-          <button @click="toggleMenu('challenges')">Défis</button>
-          <ul v-if="activeMenu === 'challenges'">
-            <li><router-link to="/challenges">Tous les défis</router-link></li>
-          </ul>
-        </li>
-        <li>
-          <button @click="toggleMenu('form')">Formulaire</button>
-          <ul v-if="activeMenu === 'form'">
-            <li><router-link to="/form">Soumettre un formulaire</router-link></li>
-          </ul>
-        </li>
-        <li>
-          <button @click="toggleMenu('stats')">Statistiques</button>
-          <ul v-if="activeMenu === 'stats'">
-            <li><router-link to="/stats">Voir les statistiques</router-link></li>
-          </ul>
-        </li>
+  <!-- Navigation conditionnelle : affichée seulement si connecté -->
+<nav v-if="isAuthenticated" class="vertical-navigation">
+  <ul>
+    <li>
+      <button @click="toggleMenu('challenges')">Défis</button>
+      <ul v-if="activeMenu === 'challenges'">
+        <li><router-link to="/challenges">Tous les défis</router-link></li>
       </ul>
-    </nav>
+    </li>
+    <li>
+      <button @click="toggleMenu('form')">Formulaire</button>
+      <ul v-if="activeMenu === 'form'">
+        <li><router-link to="/form">Soumettre un formulaire</router-link></li>
+      </ul>
+    </li>
+    <li>
+      <button @click="toggleMenu('stats')">Statistiques</button>
+      <ul v-if="activeMenu === 'stats'">
+        <li><router-link to="/stats">Voir les statistiques</router-link></li>
+      </ul>
+    </li>
+    <!-- Formulaire de Signalement -->
+    <li>
+  <button @click="toggleMenu('reportForm')">Signalement</button>
+  <ul v-if="activeMenu === 'reportForm'">
+    <li><router-link to="/reportForm">Formulaire</router-link></li>
+  </ul>
+</li>
+
+  </ul>
+</nav>
 
     <!-- Contenu principal -->
     <main class="main-content">
       <router-view />
+      <ReportForm /> <!-- Ajouter cette ligne pour afficher le composant MapComponent -->
     </main>
 
     <!-- Pied de page affiché uniquement si authentifié -->
@@ -38,14 +47,17 @@
 </template>
 
 <script>
+import ReportForm from "./components/ReportForm.vue";
 import AppHeader from "./components/Header.vue";
 import AppFooter from "./components/Footer.vue";
+
 
 export default {
   name: "App",
   components: {
     AppHeader,
     AppFooter,
+    ReportForm,  //  pour déclarer le composant formulaire de signalement
   },
   data() {
     return {
