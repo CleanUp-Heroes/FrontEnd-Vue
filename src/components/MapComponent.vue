@@ -1,27 +1,29 @@
 <template>
-  <div id="map" style="height: 400px;"></div>
+  <!-- Conteneur de la carte -->
+  <div id="map"></div>
 </template>
 
 <script>
 import L from 'leaflet'; // Importation de Leaflet
+import 'leaflet/dist/leaflet.css'; // Importation du CSS de Leaflet
 
 export default {
-  name: 'MapComponent', // nom de composant valide
-
+  name: 'MapComponent',
   mounted() {
     // Initialisation de la carte
     const map = L.map('map').setView([51.505, -0.09], 13); // Coordonnées par défaut : Londres
 
-    // Ajout du fond de carte avec OpenStreetMap
+    // Ajout du fond de carte OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map);
 
-    // Ajout d'un événement pour cliquer et ajouter un marqueur sur la carte
-    map.on('click', (event) => {
-      const lat = event.latlng.lat;
-      const lng = event.latlng.lng;
+    // Forcer Leaflet à recalculer la taille de la carte
+    setTimeout(() => map.invalidateSize(), 300);
 
+    // Événement : cliquer pour ajouter un marqueur
+    map.on('click', (event) => {
+      const { lat, lng } = event.latlng; // Récupérer les coordonnées
       L.marker([lat, lng]).addTo(map); // Ajouter un marqueur sur la carte
     });
   },
@@ -29,9 +31,11 @@ export default {
 </script>
 
 <style scoped>
+/* Style de la carte */
 #map {
-  width: 100%;
-  height: 300px;
+  width: 100%; /* Prend toute la largeur */
+  height: 500px; /* Hauteur fixe */
+  background-color: #f0f0f0; /* Fond pour s'assurer que le conteneur est visible */
+  border: 1px solid #ccc; /* Bordure pour bien visualiser */
 }
 </style>
-
