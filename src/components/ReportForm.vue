@@ -88,9 +88,9 @@ export default {
 /* Conteneur principal */
 .form-container {
   width: 100%;
-  max-width: 500px;
+  max-width: 800px; /* Augmenter la largeur maximale à 800px */
   margin: 20px auto;
-  padding: 20px;
+  padding: 30px;
   background: linear-gradient(145deg, #e6e9f0, #eef2f3);
   border-radius: 10px;
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
@@ -99,29 +99,30 @@ export default {
 
 /* Titre du formulaire */
 .form-title {
-  font-size: 24px;
+  font-size: 32px; /* Agrandir le titre pour qu'il soit mieux proportionné */
   color: #4a4a4a;
-  margin-bottom: 20px;
+  margin-bottom: 30px; /* Espacement plus large entre le titre et le reste du formulaire */
 }
 
 /* Champs de formulaire */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 30px; /* Augmenter l'espacement entre les groupes de champs */
   text-align: left;
 }
 
 label {
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   display: block;
   color: #333;
 }
 
+/* Champs de texte et textarea */
 input[type="text"],
 textarea {
   width: 100%;
-  padding: 12px;
-  font-size: 14px;
+  padding: 15px; /* Augmenter la taille du padding pour plus d'espace dans les champs */
+  font-size: 16px; /* Augmenter la taille de la police pour plus de lisibilité */
   border: 1px solid #ccc;
   border-radius: 8px;
   box-sizing: border-box;
@@ -135,7 +136,7 @@ textarea:focus {
 }
 
 textarea {
-  height: 100px;
+  height: 120px; /* Augmenter la hauteur du textarea */
   resize: none;
 }
 
@@ -143,13 +144,13 @@ textarea {
 .submit-button {
   background: #4caf50;
   color: white;
-  padding: 12px 20px;
-  font-size: 16px;
+  padding: 15px 25px; /* Augmenter la taille du bouton */
+  font-size: 18px; /* Agrandir la police du bouton */
   font-weight: bold;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.2s ease-in-out;
 }
 
 .submit-button:hover {
@@ -160,7 +161,23 @@ textarea {
 /* Messages d'erreur */
 .error-message {
   color: #d32f2f;
-  font-size: 12px;
-  margin-top: 5px;
+  font-size: 14px; /* Augmenter la taille de la police des messages d'erreur */
+  margin-top: 8px;
+}
+
+/* Responsivité */
+@media (max-width: 768px) {
+  .form-container {
+    width: 90%; /* Réduire la largeur pour les petits écrans */
+    max-width: 100%; /* Elargir au maximum le formulaire */
+  }
+
+  .form-title {
+    font-size: 28px; /* Ajuster la taille du titre pour les petits écrans */
+  }
+
+  .submit-button {
+    width: 100%; /* Rendre le bouton pleine largeur */
+  }
 }
 </style>

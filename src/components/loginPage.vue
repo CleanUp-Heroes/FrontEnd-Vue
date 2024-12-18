@@ -1,6 +1,7 @@
 <template>
-  <div class="login-page">
-    <form @submit.prevent="login" class="login-form">
+  <div class="auth-page">
+    <!-- Formulaire de Connexion -->
+    <form v-if="!isSignup" @submit.prevent="login" class="form-container">
       <h2 class="form-title">Connexion</h2>
       <div class="form-group">
         <label for="username">Nom d'utilisateur :</label>
@@ -8,60 +9,126 @@
           type="text" 
           id="username" 
           v-model="username" 
-          placeholder="Entrez votre nom" 
+          placeholder="Entrez votre nom d'utilisateur" 
           required 
           class="form-input" 
         />
       </div>
       <button type="submit" class="form-button">Se connecter</button>
+      <p class="switch-form-text">Pas encore de compte ? <span @click="toggleForm" class="link">S'inscrire</span></p>
+    </form>
+
+    <!-- Formulaire d'Inscription -->
+    <form v-if="isSignup" @submit.prevent="signup" class="form-container">
+      <h2 class="form-title">Inscription</h2>
+      <div class="form-group">
+        <label for="first-name">Prénom :</label>
+        <input 
+          type="text" 
+          id="first-name" 
+          v-model="firstName" 
+          placeholder="Entrez votre prénom" 
+          required 
+          class="form-input" 
+        />
+      </div>
+      <div class="form-group">
+        <label for="last-name">Nom :</label>
+        <input 
+          type="text" 
+          id="last-name" 
+          v-model="lastName" 
+          placeholder="Entrez votre nom" 
+          required 
+          class="form-input" 
+        />
+      </div>
+      <div class="form-group">
+        <label for="email">Adresse E-mail :</label>
+        <input 
+          type="email" 
+          id="email" 
+          v-model="email" 
+          placeholder="Entrez votre adresse e-mail" 
+          required 
+          class="form-input" 
+        />
+      </div>
+      <div class="form-group">
+        <label for="birthdate">Date de naissance :</label>
+        <input 
+          type="date" 
+          id="birthdate" 
+          v-model="birthdate" 
+          required 
+          class="form-input" 
+        />
+      </div>
+      <button type="submit" class="form-button">S'inscrire</button>
+      <p class="switch-form-text">Vous avez déjà un compte ? <span @click="toggleForm" class="link">Se connecter</span></p>
     </form>
   </div>
 </template>
 
 <script>
 export default {
-  name: "loginPage",
+  name: "authPage",
   data() {
     return {
       username: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      birthdate: "",
+      isSignup: false, // Toggle pour passer entre inscription et connexion
     };
   },
   methods: {
     login() {
       if (this.username) {
-        // Enregistrer le nom de l'utilisateur
         localStorage.setItem("username", this.username);
-
-        // Rediriger vers la page d'accueil ou une route par défaut
         this.$router.push("/challenges");
       }
+    },
+    signup() {
+      if (this.firstName && this.lastName && this.email && this.birthdate) {
+        // Enregistrer les informations utilisateur (peut être stocké dans une base de données)
+        localStorage.setItem("firstName", this.firstName);
+        localStorage.setItem("lastName", this.lastName);
+        localStorage.setItem("email", this.email);
+        localStorage.setItem("birthdate", this.birthdate);
+        this.$router.push("/challenges");
+      }
+    },
+    toggleForm() {
+      this.isSignup = !this.isSignup; // Bascule entre les formulaires de connexion et d'inscription
     },
   },
 };
 </script>
 
 <style scoped>
-/* Conteneur général pour la page */
-.login-page {
+/* Conteneur général pour centrer le formulaire */
+.auth-page {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw; /* Occupe toute la largeur de l'écran */
-  height: 100vh; /* Occupe toute la hauteur de l'écran */
-  background-color: #f0f9f5; /* Vert pâle pour un fond doux */
+  width: 100vw;
+  height: 100vh;
+  background-color: #e3f2f5;
   padding: 2rem;
   box-sizing: border-box;
-  overflow: hidden; /* Évite les débordements */
+  overflow: hidden;
 }
 
-/* Formulaire de connexion */
-.login-form {
-  background: #ffffff; /* Fond blanc pour contraste */
-  padding: 2.5rem;
+/* Style global pour le formulaire */
+.form-container {
+  background: #ffffff;
+  padding: 3rem;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   width: 90%;
-  max-width: 500px; /* Étendre la largeur pour plus de confort */
+  max-width: 800px; /* Largeur maximale pour le formulaire */
   box-sizing: border-box;
 }
 
@@ -71,12 +138,12 @@ export default {
   font-weight: bold;
   margin-bottom: 2rem;
   text-align: center;
-  color: #1a6f4b; /* Vert foncé inspirant la nature */
+  color: #1a6f4b;
 }
 
 /* Groupes de champs */
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   width: 100%;
 }
 
@@ -85,22 +152,22 @@ export default {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: bold;
-  color: #3a3a3a; /* Gris pour lisibilité */
+  color: #3a3a3a;
 }
 
 /* Champs de saisie */
 .form-input {
-  width: 100%; /* Champs prennent toute la largeur */
-  max-width: 400px; /* Largeur maximale pour grands écrans */
-  height: 3rem; /* Hauteur accrue pour un confort visuel */
-  padding: 1rem;
-  border: 1px solid #c8dad3; /* Gris clair avec teinte verte */
+  width: 100%;
+  max-width: 700px; /* Largeur maximale pour les champs de saisie */
+  height: 3rem;
+  padding: 1.2rem;
+  border: 1px solid #c8dad3;
   border-radius: 8px;
   box-sizing: border-box;
-  font-size: 1.1rem; /* Augmenter la taille de la police */
-  display: block;
-  margin: 0 auto; /* Centrer les champs */
+  font-size: 1.1rem;
   transition: border-color 0.3s ease;
+  display: block;
+  margin: 0 auto;
 }
 
 .form-input:focus {
@@ -109,12 +176,20 @@ export default {
   box-shadow: 0 0 6px rgba(26, 111, 75, 0.25);
 }
 
-/* Bouton de connexion */
+/* Messages d'erreur */
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+/* Bouton de soumission */
 .form-button {
   display: block;
   width: 100%;
-  max-width: 400px; /* Même largeur que les champs */
-  margin: 0 auto; /* Centrer le bouton */
+  max-width: 700px; /* Largeur maximale pour le bouton */
+  margin: 0 auto;
   padding: 1rem;
   background-color: #1a6f4b;
   color: #fff;
@@ -129,17 +204,5 @@ export default {
 
 .form-button:hover {
   background-color: #145d3c;
-}
-
-/* Responsivité */
-@media (max-width: 768px) {
-  .login-form {
-    padding: 2rem;
-    max-width: 100%; /* Prendre toute la largeur sur petits écrans */
-  }
-  .form-input,
-  .form-button {
-    max-width: 100%; /* S'adapter à la largeur disponible */
-  }
 }
 </style>
