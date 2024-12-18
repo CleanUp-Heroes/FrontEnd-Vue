@@ -3,14 +3,20 @@ import challengesPage from './components/challenges/challengesPages.vue';
 import challengeForm from './components/challenges/challengeForm.vue';
 import challengeStats from './components/challenges/challengeStats.vue';
 import loginPage from './components/loginPage.vue';
+import AboutPage from './components/AboutPage.vue';
 
 const routes = [
   { path: "/", redirect: "/login" }, // Redirection par défaut
   { path: '/login', component: loginPage },
-  { path: '/Page', component: challengesPage , meta: { requiresAuth: true } },
-  { path: '/form', component: challengeForm , meta: { requiresAuth: true }},
-  { path: '/stats', component: challengeStats , meta: { requiresAuth: true }},
-  
+  { path: '/Page', component: challengesPage, meta: { requiresAuth: true } },
+  { 
+    path: '/form/:challengeId',  // Route dynamique avec l'ID du défi
+    component: challengeForm,
+    meta: { requiresAuth: true },
+    props: true // Permet de passer challengeId comme prop au composant
+  },
+  { path: '/stats', component: challengeStats, meta: { requiresAuth: true } },
+  { path: '/About', name: 'AboutPage', component: AboutPage }, 
 ];
 
 const router = createRouter({
