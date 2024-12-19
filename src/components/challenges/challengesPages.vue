@@ -40,7 +40,7 @@ export default {
       this.loadingChallenges = true; // Début du chargement
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/challenge/unparticipated?username=${this.username}`
+          `http://127.0.0.1:8000/challenges/unparticipated?username=${this.username}`
         );
         if (!response.ok) throw new Error("Erreur lors de la récupération des défis");
         const data = await response.json();
@@ -57,7 +57,7 @@ export default {
       this.loadingStats = true; // Début du chargement
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/challenges/statistics?username=${this.username}`
+          `http://127.0.0.1:8000/challenges/statistics?username=${this.username}`
         );
         if (!response.ok) throw new Error("Erreur lors de la récupération des statistiques");
         const data = await response.json();
