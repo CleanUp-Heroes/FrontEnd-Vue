@@ -18,7 +18,7 @@
       <p class="switch-form-text">Pas encore de compte ? <span @click="toggleForm" class="link">S'inscrire</span></p>
     </form>
 
-    <!-- Formulaire d'Inscription   -->
+    <!-- Formulaire d'Inscription -->
     <form v-if="isSignup" @submit.prevent="signup" class="form-container">
       <h2 class="form-title">Inscription</h2>
       <div class="form-group">
@@ -54,12 +54,13 @@
           class="form-input" 
         />
       </div>
+      <!-- Remplacer la date de naissance par un champ mot de passe -->
       <div class="form-group">
-        <label for="birthdate">Date de naissance :</label>
+        <label for="password">Mot de passe :</label>
         <input 
-          type="date" 
-          id="birthdate" 
-          v-model="birthdate" 
+          type="password" 
+          id="password" 
+          v-model="password" 
           required 
           class="form-input" 
         />
@@ -70,7 +71,10 @@
   </div>
 </template>
 
+
 <script>
+import axios from "axios"; // N'oubliez pas d'importer axios
+
 export default {
   name: "authPage",
   data() {
@@ -79,25 +83,52 @@ export default {
       firstName: "",
       lastName: "",
       email: "",
-      birthdate: "",
-      isSignup: false, // Toggle pour passer entre inscription et connexion
+      password: "",
+      isSignup: false, // Toggle pour basculer entre inscription et connexion
+      errorMessage: "", // Message d'erreur pour l'utilisateur
     };
   },
   methods: {
-    login() {
-      if (this.username) {
-        localStorage.setItem("username", this.username);
-        this.$router.push("/challenges");
+    async login() {
+      if (this.username && this.password) {
+        try {
+          // Requête POST pour la connexion
+          const response = await axios.post("http://127.0.0.1:8000/login", {
+            username: this.username,
+            password: this.password,
+          });
+
+          // Vérifiez si la connexion a réussi
+          if (response.status === 200) {
+            // Stocker un token (si nécessaire) dans localStorage pour garder l'utilisateur connecté
+            localStorage.setItem("token", response.data.token); // Exemple de stockage de token
+            this.$router.push("/challenges");
+          }
+        } catch (error) {
+          this.errorMessage = "Échec de la connexion. Vérifiez vos identifiants.";
+          console.error("Erreur lors de la connexion :", error.response || error);
+        }
       }
     },
-    signup() {
-      if (this.firstName && this.lastName && this.email && this.birthdate) {
-        // Enregistrer les informations utilisateur (peut être stocké dans une base de données)
-        localStorage.setItem("firstName", this.firstName);
-        localStorage.setItem("lastName", this.lastName);
-        localStorage.setItem("email", this.email);
-        localStorage.setItem("birthdate", this.birthdate);
-        this.$router.push("/challenges");
+    async signup() {
+      if (this.firstName && this.lastName && this.email && this.password) {
+        try {
+          // Requête POST pour l'inscription
+          const response = await axios.post("http://127.0.0.1:8000/register", {
+            first_name: this.firstName,
+            last_name: this.lastName,
+            email: this.email,
+            password: this.password,
+          });
+
+          // Vérifiez si l'inscription a réussi
+          if (response.status === 201) {
+            this.$router.push("/challenges");
+          }
+        } catch (error) {
+          this.errorMessage = "Échec de l'inscription. Veuillez réessayer.";
+          console.error("Erreur lors de l'inscription :", error.response || error);
+        }
       }
     },
     toggleForm() {
@@ -106,6 +137,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 /* Conteneur général pour centrer le formulaire */

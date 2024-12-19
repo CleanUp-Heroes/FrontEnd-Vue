@@ -9,7 +9,7 @@
   
       <!-- Section des Défis -->
       <section class="challenges-section">
-        <h2>Nos Défis Écologiques</h2>
+        <h2>Nos Défis Écologiques en cours </h2>
         <div class="challenges">
           <div class="challenge-card" v-for="(challenge, index) in challenges" :key="index">
             <h3>{{ challenge.title }}</h3>

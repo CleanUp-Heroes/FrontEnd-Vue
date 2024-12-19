@@ -45,6 +45,8 @@
 </template>
 
 <script>
+import axios from 'axios'; // Import de la bibliothèque axios
+
 export default {
   data() {
     return {
@@ -59,7 +61,7 @@ export default {
     handleFileUpload(event) {
       this.form.photo = event.target.files[0]; // Sauvegarde la photo téléchargée
     },
-    submitForm() {
+    async submitForm() {
       // Validation simplifiée avec des alertes colorées
       if (!this.form.description || this.form.description.trim() === '') {
         alert('⚠️ La description est obligatoire.');
@@ -76,19 +78,40 @@ export default {
         return;
       }
 
-      alert('✅ Merci ! Votre problème a été signalé avec succès.');
-      console.log('Formulaire soumis:', this.form);
-      // Logique pour envoyer les données à votre API backend
+      // Préparer les données à envoyer
+      const formData = new FormData();
+      formData.append('description', this.form.description);
+      formData.append('location', this.form.location);
+
+      // Si une photo est sélectionnée, l'ajouter à formData
+      if (this.form.photo) {
+        formData.append('photo', this.form.photo);
+      }
+
+      try {
+        // Envoi des données au backend Django via une requête POST
+        const response = await axios.post('http://127.0.0.1:8000/reports/report/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data', // Indiquer que l'on envoie des fichiers
+          },
+        });
+
+        console.log('Réponse du backend:', response.data);
+        alert('✅ Merci ! Votre problème a été signalé avec succès.');
+      } catch (error) {
+        console.error('Erreur lors de l\'envoi du formulaire:', error);
+        alert('⚠️ Une erreur est survenue lors de l\'envoi du formulaire.');
+      }
     },
   },
 };
 </script>
 
 <style scoped>
-/* Conteneur principal */
+/* Styles du formulaire (inchangés) */
 .form-container {
   width: 100%;
-  max-width: 800px; /* Augmenter la largeur maximale à 800px */
+  max-width: 800px;
   margin: 20px auto;
   padding: 30px;
   background: linear-gradient(145deg, #e6e9f0, #eef2f3);
@@ -96,88 +119,70 @@ export default {
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
-
-/* Titre du formulaire */
 .form-title {
-  font-size: 32px; /* Agrandir le titre pour qu'il soit mieux proportionné */
+  font-size: 32px;
   color: #4a4a4a;
-  margin-bottom: 30px; /* Espacement plus large entre le titre et le reste du formulaire */
+  margin-bottom: 30px;
 }
-
-/* Champs de formulaire */
 .form-group {
-  margin-bottom: 30px; /* Augmenter l'espacement entre les groupes de champs */
+  margin-bottom: 30px;
   text-align: left;
 }
-
 label {
   font-weight: bold;
   margin-bottom: 10px;
   display: block;
   color: #333;
 }
-
-/* Champs de texte et textarea */
 input[type="text"],
 textarea {
   width: 100%;
-  padding: 15px; /* Augmenter la taille du padding pour plus d'espace dans les champs */
-  font-size: 16px; /* Augmenter la taille de la police pour plus de lisibilité */
+  padding: 15px;
+  font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 8px;
   box-sizing: border-box;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
-
 input[type="text"]:focus,
 textarea:focus {
   border-color: #4caf50;
   box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
 }
-
 textarea {
-  height: 120px; /* Augmenter la hauteur du textarea */
+  height: 120px;
   resize: none;
 }
-
-/* Bouton Envoyer */
 .submit-button {
   background: #4caf50;
   color: white;
-  padding: 15px 25px; /* Augmenter la taille du bouton */
-  font-size: 18px; /* Agrandir la police du bouton */
+  padding: 15px 25px;
+  font-size: 18px;
   font-weight: bold;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s, transform 0.2s ease-in-out;
 }
-
 .submit-button:hover {
   background: #45a049;
   transform: scale(1.05);
 }
-
-/* Messages d'erreur */
 .error-message {
   color: #d32f2f;
-  font-size: 14px; /* Augmenter la taille de la police des messages d'erreur */
+  font-size: 14px;
   margin-top: 8px;
 }
-
-/* Responsivité */
 @media (max-width: 768px) {
   .form-container {
-    width: 90%; /* Réduire la largeur pour les petits écrans */
-    max-width: 100%; /* Elargir au maximum le formulaire */
+    width: 90%;
+    max-width: 100%;
   }
-
   .form-title {
-    font-size: 28px; /* Ajuster la taille du titre pour les petits écrans */
+    font-size: 28px;
   }
-
   .submit-button {
-    width: 100%; /* Rendre le bouton pleine largeur */
+    width: 100%;
   }
 }
 </style>
