@@ -1,19 +1,23 @@
 <template>
   <div class="stats-page">
     <h2 class="stats-title">Statistiques des défis</h2>
-    <div class="stats-summary" v-if="stats">
-      <div class="stats-item">
-        <h3>Nombre total de défis accomplis :</h3>
-        <p>{{ stats.totalChallenges }}</p>
+    <div v-if="loading">Chargement des données...</div>
+    <div v-else-if="stats && stats.users && stats.users.length > 0">
+      <div class="stats-summary">
+        <div class="stats-item">
+          <h3>Nombre total de défis accomplis :</h3>
+          <p>{{ stats.totalChallenges }}</p>
+        </div>
+        <div class="stats-item">
+          <h3>Quantité totale réalisée :</h3>
+          <p>{{ stats.totalQuantity }}</p>
+        </div>
       </div>
-      <div class="stats-item">
-        <h3>Quantité totale réalisée :</h3>
-        <p>{{ stats.totalQuantity }}</p>
+      <div class="chart-container">
+        <canvas id="chart"></canvas>
       </div>
     </div>
-    <div class="chart-container">
-      <canvas id="chart"></canvas>
-    </div>
+    <p v-else>Aucune donnée statistique disponible.</p>
   </div>
 </template>
 
@@ -21,14 +25,30 @@
 import Chart from "chart.js/auto";
 
 export default {
-  props: ["stats"],
+  props: ["stats", "loading"], // Ajout de la prop "loading" pour gérer l'état de chargement
+  data() {
+    return {
+      chartInstance: null, // Stocker l'instance du graphique pour une gestion propre
+    };
+  },
   watch: {
-    stats: "renderChart",
+    stats: "renderChart", // Recrée le graphique si les données changent
   },
   methods: {
     renderChart() {
+      // Vérifie si les stats contiennent les données nécessaires
+      if (!this.stats || !this.stats.users || this.stats.users.length === 0) {
+        console.warn("Aucune donnée disponible pour le graphique.");
+        return;
+      }
+
+      // Détruire l'ancien graphique si nécessaire
+      if (this.chartInstance) {
+        this.chartInstance.destroy();
+      }
+
       const ctx = document.getElementById("chart").getContext("2d");
-      new Chart(ctx, {
+      this.chartInstance = new Chart(ctx, {
         type: "bar",
         data: {
           labels: this.stats.users.map((user) => user.name),
@@ -51,6 +71,12 @@ export default {
       });
     },
   },
+  beforeUnmount() {
+    // Détruire le graphique avant de démonter le composant
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+    }
+  },
 };
 </script>
 
@@ -62,7 +88,7 @@ export default {
   align-items: center;
   justify-content: center;
   width: 100vw; /* Occupe toute la largeur de l'écran */
-  height: 100vh; /* Occupe toute la hauteur de l'écran */
+  height: 100%; /* Hauteur adaptée au contenu */
   background-color: #f6fdfb; /* Fond vert pâle */
   padding: 2rem;
   box-sizing: border-box;
@@ -118,8 +144,9 @@ export default {
 .chart-container {
   width: 100%;
   max-width: 1200px;
-  background: #ffffff; /* Fond blanc pour contraste */
+  overflow-x: auto; /* Permet le défilement horizontal pour les petits écrans */
   padding: 2rem;
+  background: #ffffff; /* Fond blanc pour contraste */
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;

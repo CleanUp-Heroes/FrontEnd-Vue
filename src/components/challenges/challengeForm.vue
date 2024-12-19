@@ -3,30 +3,34 @@
     <form @submit.prevent="submitForm" class="challenge-form" enctype="multipart/form-data">
       <h2 class="form-title">Participer au défi</h2>
 
+      <!-- Nom du défi affiché, mais pas modifiable -->
       <div class="form-group">
-        <label for="name">Nom du défi</label>
-        <input type="text" v-model="form.name" id="name" required class="form-input" />
-        <span v-if="errors.name" class="error-message">{{ errors.name }}</span>
+        <label for="challenge-name">Nom du défi</label>
+        <p id="challenge-name" class="form-static">{{ challengeName }}</p>
       </div>
 
+      <!-- Champ pour saisir la quantité -->
       <div class="form-group">
-        <label for="quantity">Quantité ou preuve</label>
-        <input type="text" v-model="form.quantity" id="quantity" required class="form-input" />
+        <label for="quantity">Quantité</label>
+        <input type="number" v-model.number="form.quantity" id="quantity" required class="form-input" />
         <span v-if="errors.quantity" class="error-message">{{ errors.quantity }}</span>
       </div>
 
+      <!-- Champ pour saisir la date -->
       <div class="form-group">
         <label for="date">Date de réalisation</label>
         <input type="date" v-model="form.date" id="date" required class="form-input" />
         <span v-if="errors.date" class="error-message">{{ errors.date }}</span>
       </div>
 
+      <!-- Champ pour ajouter une photo -->
       <div class="form-group">
         <label for="photo">Photo</label>
         <input type="file" @change="handleFileUpload" id="photo" class="form-input" />
         <span v-if="errors.photo" class="error-message">{{ errors.photo }}</span>
       </div>
 
+      <!-- Bouton de soumission -->
       <button type="submit" class="form-button">Soumettre</button>
     </form>
   </div>
@@ -34,11 +38,20 @@
 
 <script>
 export default {
+  props: {
+    challengeName: {
+      type: String,
+      required: true, // Nom du défi à afficher
+    },
+    userId: {
+      type: Number,
+      required: true, // ID de l'utilisateur à envoyer au back
+    },
+  },
   data() {
     return {
       form: {
-        name: '', // Nom du défi
-        quantity: '', // Quantité ou preuve
+        quantity: null, // Quantité (nombre entier)
         date: '', // Date de réalisation
         photo: null, // Fichier photo
       },
@@ -48,12 +61,9 @@ export default {
   methods: {
     validateForm() {
       this.errors = {}; // Réinitialise les erreurs
-      
-      if (!this.form.name.trim()) {
-        this.errors.name = "Le nom du défi est obligatoire.";
-      }
-      if (!this.form.quantity.trim()) {
-        this.errors.quantity = "La quantité ou preuve est obligatoire.";
+
+      if (!this.form.quantity || this.form.quantity <= 0) {
+        this.errors.quantity = "La quantité est obligatoire et doit être un nombre positif.";
       }
       if (!this.form.date) {
         this.errors.date = "La date de réalisation est obligatoire.";
@@ -61,7 +71,7 @@ export default {
       if (!this.form.photo) {
         this.errors.photo = "Une photo est obligatoire.";
       }
-      
+
       // Retourne vrai si aucun champ n'est invalide
       return Object.keys(this.errors).length === 0;
     },
@@ -75,13 +85,10 @@ export default {
       }
 
       const formData = new FormData();
-      formData.append('name', this.form.name);
       formData.append('quantity', this.form.quantity);
       formData.append('date', this.form.date);
-
-      if (this.form.photo) {
-        formData.append('photo', this.form.photo);
-      }
+      formData.append('photo', this.form.photo);
+      formData.append('userId', this.userId); // Ajout de l'ID de l'utilisateur au back
 
       try {
         const response = await fetch('/api/challenge/participate', {
@@ -149,6 +156,19 @@ export default {
   margin-bottom: 0.5rem;
   font-weight: bold;
   color: #3a3a3a;
+}
+
+/* Champ affichant le nom du défi (non éditable) */
+.form-static {
+  background: #f6f6f6;
+  padding: 1.2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  color: #3a3a3a;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* Champs de saisie */
