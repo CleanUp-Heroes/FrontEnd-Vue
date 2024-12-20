@@ -53,10 +53,7 @@ export default {
       }
     },
     participate(challengeId, challengeName) {
-      this.$router.push(`/challenges/${challengeId}/participate/${challengeName}`
-
-      
-      );
+      this.$router.push(/challenges/$`{challengeId}/participate/${challengeName}`);
     },
     formatDate(dateString) {
       const options = { year: "numeric", month: "long", day: "numeric" };
