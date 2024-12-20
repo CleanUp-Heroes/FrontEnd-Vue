@@ -1,13 +1,7 @@
 <template>
   <div class="form-container">
     <form @submit.prevent="submitForm" class="challenge-form" enctype="multipart/form-data">
-      <h2 class="form-title">Participer au défi</h2>
-
-      <!-- Nom du défi affiché, mais pas modifiable -->
-      <div class="form-group">
-        <label for="challenge-name">Nom du défi</label>
-        <p id="challenge-name" class="form-static">{{ challengeName || 'Chargement...' }}</p>
-      </div>
+      <h2 class="form-title">Participer au défi {{ this.$route.params.challengeName }}</h2>
 
       <!-- Champ pour saisir la quantité -->
       <div class="form-group">
@@ -56,14 +50,17 @@
 <script>
 export default {
   props: {
-    challengeId: {
+    id: {
       type: Number,
-      required: true, // ID du défi pour récupérer ses détails
+      required: true, // ID du défi pour ajouter au formData
+    },
+    challengeName: {
+      type: String,
+      required: true, // Nom du défi transmis comme prop
     },
   },
   data() {
     return {
-      challengeName: '', // Nom du défi à afficher
       form: {
         quantity: null, // Quantité (nombre entier)
         date: '', // Date de réalisation
@@ -72,25 +69,7 @@ export default {
       errors: {}, // Objets pour stocker les erreurs de validation
     };
   },
-  mounted() {
-    this.fetchChallengeDetails();
-  },
   methods: {
-    // Récupérer les détails du défi depuis le back-end
-    async fetchChallengeDetails() {
-      try {
-        const response = await fetch(`http://127.0.0.1:8000/challenges/${this.challengeId}/`);
-        const data = await response.json();
-        if (response.ok) {
-          this.challengeName = data.name; // Le nom du défi
-        } else {
-          alert('Erreur lors de la récupération des détails du défi');
-        }
-      } catch (error) {
-        console.error('Erreur réseau :', error);
-        alert('Impossible de récupérer les détails du défi.');
-      }
-    },
     validateForm() {
       this.errors = {}; // Réinitialise les erreurs
 
@@ -110,34 +89,42 @@ export default {
       this.form.photo = event.target.files[0];
     },
     async submitForm() {
-      if (!this.validateForm()) {
-        return; // Stoppe la soumission si des erreurs sont présentes
-      }
+  if (!this.validateForm()) {
+    return; // Stoppe la soumission si des erreurs sont présentes
+  }
 
-      const formData = new FormData();
-      formData.append('quantity', this.form.quantity);
-      formData.append('date', this.form.date);
-      formData.append('photo', this.form.photo);
+  const formData = new FormData();
+  formData.append('quantity', this.form.quantity);
+  formData.append('date', this.form.date);
+  formData.append('photo', this.form.photo);
+  formData.append('challenge_id', this.$route.params.id); // Ajout de l'ID du défi dans le formData
 
-      try {
-        const response = await fetch('http://127.0.0.1:8000/challenges/participation/', {
-          method: 'POST',
-          body: formData,
-        });
+  // Récupération du token depuis le stockage local (ou autre méthode)
+  const token = localStorage.getItem('token'); // Remplacez 'auth_token' par le nom exact utilisé
 
-        if (response.ok) {
-          alert('Participation enregistrée avec succès !');
-          this.$router.push('/challenges'); // Redirige vers la page des défis après soumission
-        } else {
-          const errorData = await response.json();
-          console.error('Erreur de l’API :', errorData);
-          alert('Une erreur est survenue lors de la soumission.');
-        }
-      } catch (error) {
-        console.error('Erreur réseau :', error);
-        alert('Impossible de contacter le serveur.');
-      }
+  try {
+    const response = await fetch('http://127.0.0.1:8000/challenges/participation/', {
+      method: 'POST',
+      headers: {
+        'Authorization': token,  // Ajout du token dans l'en-tête Authorization
+      },
+      body: formData,
+    });
+
+    if (response.ok) {
+      alert('Participation enregistrée avec succès !');
+      this.$router.push('/challenges'); // Redirige vers la page des défis après soumission
+    } else {
+      const errorData = await response.json();
+      console.error('Erreur de l’API :', errorData);
+      alert('Une erreur est survenue lors de la soumission.');
+    }
+  } catch (error) {
+    console.error('Erreur réseau :', error);
+    alert('Impossible de contacter le serveur.');
+  }
     },
+
   },
 };
 </script>

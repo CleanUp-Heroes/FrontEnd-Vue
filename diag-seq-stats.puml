@@ -1,0 +1,15 @@
+@startuml statistiques
+actor Utilisateur
+participant "Frontend (Vue.js)" as Frontend
+participant "Backend (Django API)" as Backend
+participant "Base de données" as Database
+
+Utilisateur -> Frontend: Cliquer sur "Voir les statistiques"
+Frontend -> Backend: GET /api/statistiques
+Backend -> Database: Récupérer données des défis et utilisateurs
+Database --> Backend: Renvoie les données (JSON)
+Backend -> Backend: Traitement des données (agrégation, calculs, etc.)
+Backend --> Frontend: Renvoie les statistiques (JSON)
+Frontend -> Frontend: Génération des graphiques et visualisations
+Frontend -> Utilisateur: Afficher les statistiques (graphiques, tableaux)
+@enduml

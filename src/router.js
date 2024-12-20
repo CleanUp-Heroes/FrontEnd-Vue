@@ -15,11 +15,12 @@ import AcceuilPage from './components/AcceuilPage.vue';
 const routes = [
   { path: "/", redirect: "/login" }, // Redirection par défaut
   { path: '/login', component: loginPage },
-  { path: '/Page', component: challengesPage, meta: { requiresAuth: true } },
-  { 
-    path: '/form',  // Route statique pour le formulaire
-    component: challengeForm, meta: { requiresAuth: true },
-  },
+  { path: '/challenges', component: challengesPage, meta: { requiresAuth: true } },
+  {
+    path: '/challenges/:id/participate/:challengeName/',
+    component: challengeForm,
+    meta: { requiresAuth: true }
+  },  
   { path: '/stats', component: challengeStats, meta: { requiresAuth: true } },
   { path: '/About', name: 'AboutPage', component: AboutPage }, 
   { path: '/reports', component: MapComponent },

@@ -1,135 +1,148 @@
 <template>
-  <div>
-    <h1>Défis disponibles</h1>
-    <!-- Section des défis -->
-    <ul v-if="challenges.length > 0">
-      <li v-for="challenge in challenges" :key="challenge.id">
-        <h3>{{ challenge.name }}</h3>
-        <p>{{ challenge.description }}</p>
-        <p><strong>Dates :</strong> {{ challenge.start_date }} - {{ challenge.end_date }}</p>
-        <p><strong>Actions attendues :</strong> {{ challenge.expected_actions }}</p>
-        <p><strong>Unité :</strong> {{ challenge.unit }}</p>
-        <p><strong>Points :</strong> {{ challenge.points }}</p>
-        <button @click="participate(challenge.id)">Participer</button>
+  <div class="challenges-page">
+    <h1 class="page-title">Défis disponibles</h1>
+    <div v-if="challenges.length === 0" class="no-challenges">
+      <p>Aucun défi disponible</p>
+    </div>
+    <ul v-else class="challenges-list">
+      <li v-for="challenge in challenges" :key="challenge.id" class="challenge-item">
+        <h3 class="challenge-name">{{ challenge.name }}</h3>
+        <p class="challenge-description">{{ challenge.description }}</p>
+        <p class="challenge-info">
+          <strong>Dates :</strong> {{ formatDate(challenge.start_date) }} - {{ formatDate(challenge.end_date) }}
+        </p>
+        <p class="challenge-info">
+          <strong>Actions attendues :</strong> {{ challenge.expected_actions }} {{ challenge.unit }}
+        </p>
+        <p class="challenge-info">
+          <strong>Points :</strong> {{ challenge.points }}
+        </p>
+        <button @click="participate(challenge.id, challenge.name)" class="participate-button">Participer</button>
       </li>
     </ul>
-    <p v-else-if="!loadingChallenges">Aucun défi disponible pour l'instant.</p>
-    <p v-else>Chargement des défis...</p>
-
-    <!-- Section des statistiques -->
-    <h2>Statistiques des défis</h2>
-    <challengeStats v-if="stats && !loadingStats" :stats="stats" />
-    <p v-else-if="!stats && !loadingStats">Aucune statistique disponible pour l'instant.</p>
-    <p v-else>Chargement des statistiques...</p>
   </div>
 </template>
-
 <script>
-import challengeStats from "./challengeStats.vue";
+import axios from "axios";
 
 export default {
   data() {
     return {
       challenges: [], // Liste des défis disponibles
-      stats: null, // Statistiques globales des défis
-      username: "votre_username", // À remplacer par le username réel de l'utilisateur connecté
-      loadingChallenges: true, // Indicateur de chargement des défis
-      loadingStats: true, // Indicateur de chargement des statistiques
     };
   },
-  components: { challengeStats },
   methods: {
-    // Récupère les défis auxquels l'utilisateur n'a pas participé
     async fetchChallenges() {
-      this.loadingChallenges = true; // Début du chargement
       try {
-        const response = await fetch(
-          `http://127.0.0.1:8000/challenges/unparticipated?username=${this.username}`
-        );
-        if (!response.ok) throw new Error("Erreur lors de la récupération des défis");
-        const data = await response.json();
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("Token manquant dans localStorage");
+          return;
+        }
 
-        // Récupérer chaque défi avec les données requises
-        this.challenges = data.map(challenge => ({
-          id: challenge.id,
-          name: challenge.name,
-          description: challenge.description,
-          start_date: challenge.start_date,
-          end_date: challenge.end_date,
-          expected_actions: challenge.expected_actions,
-          unit: challenge.unit.name,
-          points: challenge.points,
-        }));
+        const response = await axios.get("http://127.0.0.1:8000/challenges/unparticipated/", {
+          headers: {
+            Authorization: token,
+          },
+        });
+
+        // Récupération des défis non participés
+        this.challenges = response.data.unparticipated_challenges;
       } catch (error) {
-        console.error(error.message);
-      } finally {
-        this.loadingChallenges = false; // Fin du chargement
+        console.error("Erreur lors de la récupération des défis :", error);
       }
     },
+    participate(challengeId, challengeName) {
+      this.$router.push(`/challenges/${challengeId}/participate/${challengeName}`
 
-    // Récupère les statistiques des défis pour l'utilisateur
-    async fetchStats() {
-      this.loadingStats = true; // Début du chargement
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:8000/challenges/statistics?username=${this.username}`
-        );
-        if (!response.ok) throw new Error("Erreur lors de la récupération des statistiques");
-        const data = await response.json();
-        this.stats = data || {};
-      } catch (error) {
-        console.error(error.message);
-      } finally {
-        this.loadingStats = false; // Fin du chargement
-      }
+      
+      );
     },
-
-    // Redirection vers le formulaire avec l'ID du défi dans l'URL
-    participate(challengeId) {
-      this.$router.push(`/challenges/${challengeId}/participate`);
+    formatDate(dateString) {
+      const options = { year: "numeric", month: "long", day: "numeric" };
+      return new Date(dateString).toLocaleDateString("fr-FR", options);
     },
   },
   mounted() {
     this.fetchChallenges();
-    this.fetchStats();
   },
 };
 </script>
-
 <style scoped>
-/* Ajout de styles pour améliorer l'affichage */
-h1,
-h2 {
-  color: #1a6f4b; /* Vert foncé */
+.challenges-page {
+  padding: 2rem;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-ul {
+.page-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.challenges-list {
   list-style-type: none;
   padding: 0;
+  width: 100%;
+  max-width: 800px;
 }
 
-li {
+.challenge-item {
+  background-color: #ffffff;
   margin-bottom: 1rem;
-  padding: 1rem;
-  border: 1px solid #e5e5e5;
+  padding: 1.5rem;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-button {
-  background-color: #38bd94; /* Vert pastel */
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
+.challenge-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #34495e;
+  margin-bottom: 0.5rem;
 }
 
-button:hover {
-  background-color: #1a6f4b; /* Vert foncé */
+.challenge-description {
+  font-size: 1rem;
+  color: #7f8c8d;
+  margin-bottom: 1rem;
 }
 
-p {
+.challenge-info {
+  font-size: 0.9rem;
   color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.participate-button {
+  background-color: #1abc9c;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  align-self: flex-start;
+}
+
+.participate-button:hover {
+  background-color: #16a085;
+}
+
+.no-challenges {
+  font-size: 1.5rem;
+  color: #e74c3c;
+  font-weight: bold;
+  padding: 2rem;
+  text-align: center;
 }
 </style>

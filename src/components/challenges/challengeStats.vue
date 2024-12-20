@@ -3,6 +3,7 @@
     <h2 class="stats-title">Statistiques des défis</h2>
     <div v-if="loading">Chargement des données...</div>
     <div v-else-if="stats">
+      <!-- Résumé des statistiques -->
       <div class="stats-summary">
         <div class="stats-item">
           <h3>Nombre total de défis accomplis :</h3>
@@ -10,34 +11,37 @@
         </div>
         <div class="stats-item">
           <h3>Quantité totale réalisée :</h3>
-          <p>{{ stats.totalQuantity }}</p>
+          <ul>
+            <li v-for="(quantity, index) in stats.totalQuantity" :key="index">
+              {{ quantity }}
+            </li>
+          </ul>
         </div>
         <div class="stats-item">
           <h3>Score total :</h3>
           <p>{{ stats.totalScore }}</p>
         </div>
-        <div class="stats-item">
-          <h3>Progression :</h3>
-          <p>{{ stats.progress }}%</p>
-        </div>
       </div>
-      <div class="chart-container">
-        <canvas id="chart"></canvas>
+
+      <!-- Liste des progressions -->
+      <div class="progress-section">
+        <h3>Progression des défis en cours :</h3>
+        <ul>
+          <li v-for="(progressItem, index) in stats.progress" :key="index">
+            <strong>{{ progressItem.challengeName }}</strong> : {{ progressItem.realizedQuantity }} ({{ progressItem.progressPercentage }}%)
+          </li>
+        </ul>
       </div>
     </div>
     <p v-else>Aucune donnée statistique disponible.</p>
   </div>
 </template>
-
 <script>
-import Chart from "chart.js/auto";
-
 export default {
   data() {
     return {
       stats: null, // Contient les statistiques récupérées depuis le backend
       loading: true, // Indique si les données sont en cours de chargement
-      chartInstance: null, // Stocke l'instance du graphique pour une gestion propre
     };
   },
   mounted() {
@@ -46,22 +50,34 @@ export default {
   methods: {
     async fetchStats() {
       try {
-        const response = await fetch("http://127.0.0.1:8000/challenges/statistics/");
+        const token = localStorage.getItem("token"); // Récupère le token depuis localStorage
+        if (!token) {
+          console.error("Token manquant dans localStorage");
+          this.loading = false;
+          return;
+        }
+
+        // Ajouter le token dans l'en-tête Authorization
+        const response = await fetch("http://127.0.0.1:8000/challenges/statistics/", {
+          method: "GET",
+          headers: {
+            "Authorization": token,
+            "Content-Type": "application/json",
+          },
+        });
+
         if (!response.ok) throw new Error("Erreur lors de la récupération des données.");
 
         const data = await response.json();
 
-        // Mapper les données pour les utiliser dans le composant
+        // Mapper les données directement
         this.stats = {
-          completedChallengesCount: data.completed_challenges_count,
-          completedChallenges: data.completed_challenges_list,
-          totalQuantity: data.quantities.reduce((sum, item) => sum + item.quantity, 0),
-          totalScore: data.total_score,
+          completedChallengesCount: data.completedChallengesCount,
+          completedChallenges: data.completedChallenges,
+          totalQuantity: data.totalQuantity,
+          totalScore: data.totalScore,
           progress: data.progress,
         };
-
-        // Render le graphique une fois les données chargées
-        this.renderChart();
       } catch (error) {
         console.error("Erreur :", error);
         this.stats = null; // Si une erreur survient, pas de données
@@ -69,46 +85,6 @@ export default {
         this.loading = false; // Désactive l'état de chargement
       }
     },
-    renderChart() {
-      if (!this.stats || !this.stats.completedChallenges) {
-        console.warn("Pas de données disponibles pour le graphique.");
-        return;
-      }
-
-      // Détruire l'ancien graphique si nécessaire
-      if (this.chartInstance) {
-        this.chartInstance.destroy();
-      }
-
-      const ctx = document.getElementById("chart").getContext("2d");
-      this.chartInstance = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: this.stats.completedChallenges.map((challenge) => challenge.name),
-          datasets: [
-            {
-              label: "Quantité réalisée",
-              data: this.stats.completedChallenges.map((challenge) => challenge.quantity),
-              backgroundColor: "rgba(56, 189, 148, 0.2)", // Couleur verte pastel
-              borderColor: "rgba(56, 189, 148, 1)", // Bordure verte
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: "top" },
-          },
-        },
-      });
-    },
-  },
-  beforeUnmount() {
-    // Détruire le graphique avant de démonter le composant
-    if (this.chartInstance) {
-      this.chartInstance.destroy();
-    }
   },
 };
 </script>
