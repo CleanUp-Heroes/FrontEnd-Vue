@@ -6,27 +6,44 @@
       <!-- Nom du défi affiché, mais pas modifiable -->
       <div class="form-group">
         <label for="challenge-name">Nom du défi</label>
-        <p id="challenge-name" class="form-static">{{ challengeName }}</p>
+        <p id="challenge-name" class="form-static">{{ challengeName || 'Chargement...' }}</p>
       </div>
 
       <!-- Champ pour saisir la quantité -->
       <div class="form-group">
         <label for="quantity">Quantité</label>
-        <input type="number" v-model.number="form.quantity" id="quantity" required class="form-input" />
+        <input
+          type="number"
+          v-model.number="form.quantity"
+          id="quantity"
+          required
+          class="form-input"
+        />
         <span v-if="errors.quantity" class="error-message">{{ errors.quantity }}</span>
       </div>
 
       <!-- Champ pour saisir la date -->
       <div class="form-group">
         <label for="date">Date de réalisation</label>
-        <input type="date" v-model="form.date" id="date" required class="form-input" />
+        <input
+          type="date"
+          v-model="form.date"
+          id="date"
+          required
+          class="form-input"
+        />
         <span v-if="errors.date" class="error-message">{{ errors.date }}</span>
       </div>
 
       <!-- Champ pour ajouter une photo -->
       <div class="form-group">
         <label for="photo">Photo</label>
-        <input type="file" @change="handleFileUpload" id="photo" class="form-input" />
+        <input
+          type="file"
+          @change="handleFileUpload"
+          id="photo"
+          class="form-input"
+        />
         <span v-if="errors.photo" class="error-message">{{ errors.photo }}</span>
       </div>
 
@@ -39,17 +56,14 @@
 <script>
 export default {
   props: {
-    challengeName: {
-      type: String,
-      required: true, // Nom du défi à afficher
-    },
-    userId: {
+    challengeId: {
       type: Number,
-      required: true, // ID de l'utilisateur à envoyer au back
+      required: true, // ID du défi pour récupérer ses détails
     },
   },
   data() {
     return {
+      challengeName: '', // Nom du défi à afficher
       form: {
         quantity: null, // Quantité (nombre entier)
         date: '', // Date de réalisation
@@ -58,28 +72,44 @@ export default {
       errors: {}, // Objets pour stocker les erreurs de validation
     };
   },
+  mounted() {
+    this.fetchChallengeDetails();
+  },
   methods: {
+    // Récupérer les détails du défi depuis le back-end
+    async fetchChallengeDetails() {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/challenges/${this.challengeId}/`);
+        const data = await response.json();
+        if (response.ok) {
+          this.challengeName = data.name; // Le nom du défi
+        } else {
+          alert('Erreur lors de la récupération des détails du défi');
+        }
+      } catch (error) {
+        console.error('Erreur réseau :', error);
+        alert('Impossible de récupérer les détails du défi.');
+      }
+    },
     validateForm() {
       this.errors = {}; // Réinitialise les erreurs
 
       if (!this.form.quantity || this.form.quantity <= 0) {
-        this.errors.quantity = "La quantité est obligatoire et doit être un nombre positif.";
+        this.errors.quantity = 'La quantité est obligatoire et doit être un nombre positif.';
       }
       if (!this.form.date) {
-        this.errors.date = "La date de réalisation est obligatoire.";
+        this.errors.date = 'La date de réalisation est obligatoire.';
       }
       if (!this.form.photo) {
-        this.errors.photo = "Une photo est obligatoire.";
+        this.errors.photo = 'Une photo est obligatoire.';
       }
 
-      // Retourne vrai si aucun champ n'est invalide
       return Object.keys(this.errors).length === 0;
     },
     handleFileUpload(event) {
       this.form.photo = event.target.files[0];
     },
     async submitForm() {
-      // Valide le formulaire avant de continuer
       if (!this.validateForm()) {
         return; // Stoppe la soumission si des erreurs sont présentes
       }
@@ -88,10 +118,9 @@ export default {
       formData.append('quantity', this.form.quantity);
       formData.append('date', this.form.date);
       formData.append('photo', this.form.photo);
-      formData.append('userId', this.userId); // Ajout de l'ID de l'utilisateur au back
 
       try {
-        const response = await fetch('/api/challenge/participate', {
+        const response = await fetch('http://127.0.0.1:8000/challenges/participation/', {
           method: 'POST',
           body: formData,
         });
@@ -100,10 +129,13 @@ export default {
           alert('Participation enregistrée avec succès !');
           this.$router.push('/challenges'); // Redirige vers la page des défis après soumission
         } else {
-          alert('Une erreur est survenue.');
+          const errorData = await response.json();
+          console.error('Erreur de l’API :', errorData);
+          alert('Une erreur est survenue lors de la soumission.');
         }
       } catch (error) {
         console.error('Erreur réseau :', error);
+        alert('Impossible de contacter le serveur.');
       }
     },
   },

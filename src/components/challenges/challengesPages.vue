@@ -6,6 +6,10 @@
       <li v-for="challenge in challenges" :key="challenge.id">
         <h3>{{ challenge.name }}</h3>
         <p>{{ challenge.description }}</p>
+        <p><strong>Dates :</strong> {{ challenge.start_date }} - {{ challenge.end_date }}</p>
+        <p><strong>Actions attendues :</strong> {{ challenge.expected_actions }}</p>
+        <p><strong>Unité :</strong> {{ challenge.unit }}</p>
+        <p><strong>Points :</strong> {{ challenge.points }}</p>
         <button @click="participate(challenge.id)">Participer</button>
       </li>
     </ul>
@@ -44,7 +48,18 @@ export default {
         );
         if (!response.ok) throw new Error("Erreur lors de la récupération des défis");
         const data = await response.json();
-        this.challenges = data.unparticipated_challenges || [];
+
+        // Récupérer chaque défi avec les données requises
+        this.challenges = data.map(challenge => ({
+          id: challenge.id,
+          name: challenge.name,
+          description: challenge.description,
+          start_date: challenge.start_date,
+          end_date: challenge.end_date,
+          expected_actions: challenge.expected_actions,
+          unit: challenge.unit.name,
+          points: challenge.points,
+        }));
       } catch (error) {
         console.error(error.message);
       } finally {
