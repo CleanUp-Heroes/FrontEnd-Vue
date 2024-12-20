@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import axios from 'axios'; // Import de la bibliothèque axios
+import axios from 'axios';
 
 export default {
   data() {
@@ -59,10 +59,18 @@ export default {
   },
   methods: {
     handleFileUpload(event) {
-      this.form.photo = event.target.files[0]; // Sauvegarde la photo téléchargée
+      this.form.photo = event.target.files[0]; // Récupération du fichier uploadé
     },
     async submitForm() {
-      // Validation simplifiée avec des alertes colorées
+      // Vérifier la présence du token d'authentification
+      const token = localStorage.getItem('token'); // Ou utilisez Vuex si vous l'avez stocké ailleurs
+      if (!token) {
+        alert('⚠️ Vous devez être connecté pour signaler un problème.');
+        this.$router.push('/login'); // Redirige l'utilisateur vers la page de connexion
+        return;
+      }
+
+      // Validation simplifiée
       if (!this.form.description || this.form.description.trim() === '') {
         alert('⚠️ La description est obligatoire.');
         return;
@@ -78,25 +86,28 @@ export default {
         return;
       }
 
-      // Préparer les données à envoyer
+      // Préparer les données
       const formData = new FormData();
       formData.append('description', this.form.description);
       formData.append('location', this.form.location);
-
-      // Si une photo est sélectionnée, l'ajouter à formData
       if (this.form.photo) {
         formData.append('photo', this.form.photo);
       }
 
       try {
-        // Envoi des données au backend Django via une requête POST
-        const response = await axios.post('http://127.0.0.1:8000/reports/report/', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data', // Indiquer que l'on envoie des fichiers
-          },
-        });
-
+        // Envoi des données au backend avec le token dans l'en-tête
+        const response = await axios.post(
+          'http://127.0.0.1:8000/reports/report/', 
+          formData, 
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: token,  // Ajout du token dans l'en-tête
+            },
+          }
+        );
         console.log('Réponse du backend:', response.data);
+        console.log('Réponse du token:', token);
         alert('✅ Merci ! Votre problème a été signalé avec succès.');
       } catch (error) {
         console.error('Erreur lors de l\'envoi du formulaire:', error);
@@ -106,6 +117,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 /* Styles du formulaire (inchangés) */

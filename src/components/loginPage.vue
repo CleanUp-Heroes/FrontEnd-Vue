@@ -9,7 +9,19 @@
           type="text" 
           id="username" 
           v-model="username" 
-          placeholder="Entrez votre nom d'utilisateur" 
+          placeholder="Entrez votre nom d'utilisateur :  votre Prenom.Nom" 
+          required 
+          class="form-input" 
+        />
+      </div>
+      <!-- Champ Mot de Passe -->
+      <div class="form-group">
+        <label for="password">Mot de passe :</label>
+        <input 
+          type="password" 
+          id="password" 
+          v-model="password" 
+          placeholder="Entrez votre mot de passe" 
           required 
           class="form-input" 
         />
@@ -54,7 +66,7 @@
           class="form-input" 
         />
       </div>
-      <!-- Remplacer la date de naissance par un champ mot de passe -->
+      <!-- Champ Mot de passe pour l'inscription -->
       <div class="form-group">
         <label for="password">Mot de passe :</label>
         <input 
@@ -71,9 +83,8 @@
   </div>
 </template>
 
-
 <script>
-import axios from "axios"; // N'oubliez pas d'importer axios
+import axios from "axios";
 
 export default {
   name: "authPage",
@@ -92,15 +103,12 @@ export default {
     async login() {
       if (this.username && this.password) {
         try {
-          // Requête POST pour la connexion
-          const response = await axios.post("http://127.0.0.1:8000/login", {
+          const response = await axios.post("http://127.0.0.1:8000/login/", {
             username: this.username,
             password: this.password,
           });
 
-          // Vérifiez si la connexion a réussi
           if (response.status === 200) {
-            // Stocker un token (si nécessaire) dans localStorage pour garder l'utilisateur connecté
             localStorage.setItem("token", response.data.token); // Exemple de stockage de token
             this.$router.push("/challenges");
           }
@@ -113,15 +121,13 @@ export default {
     async signup() {
       if (this.firstName && this.lastName && this.email && this.password) {
         try {
-          // Requête POST pour l'inscription
-          const response = await axios.post("http://127.0.0.1:8000/register", {
+          const response = await axios.post("http://127.0.0.1:8000/register/", {
             first_name: this.firstName,
             last_name: this.lastName,
             email: this.email,
             password: this.password,
           });
 
-          // Vérifiez si l'inscription a réussi
           if (response.status === 201) {
             this.$router.push("/challenges");
           }
@@ -137,7 +143,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 /* Conteneur général pour centrer le formulaire */
@@ -160,7 +165,7 @@ export default {
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   width: 90%;
-  max-width: 800px; /* Largeur maximale pour le formulaire */
+  max-width: 800px;
   box-sizing: border-box;
 }
 
@@ -190,7 +195,7 @@ export default {
 /* Champs de saisie */
 .form-input {
   width: 100%;
-  max-width: 700px; /* Largeur maximale pour les champs de saisie */
+  max-width: 700px;
   height: 3rem;
   padding: 1.2rem;
   border: 1px solid #c8dad3;
@@ -220,7 +225,7 @@ export default {
 .form-button {
   display: block;
   width: 100%;
-  max-width: 700px; /* Largeur maximale pour le bouton */
+  max-width: 700px;
   margin: 0 auto;
   padding: 1rem;
   background-color: #1a6f4b;

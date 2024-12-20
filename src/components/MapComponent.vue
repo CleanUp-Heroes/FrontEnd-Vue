@@ -1,112 +1,92 @@
 <template>
-  <!-- Conteneur de la carte -->
-  <div id="map"></div>
+  <div class="list-reports-container">
+    <h2 class="list-reports-title">📋 Liste des Signalements</h2>
+
+    <!-- Liste des signalements -->
+    <div v-if="reports.length > 0">
+      <div v-for="(report, index) in reports" :key="index" class="report-card">
+        <h3>{{ report.description }}</h3>
+        <p><strong>Emplacement :</strong> {{ report.location }}</p>
+        <p v-if="report.photo"><strong>Photo :</strong> <img :src="report.photo" alt="Signalement Photo" class="report-photo" /></p>
+        <p><strong>Date :</strong> {{ new Date(report.created_at).toLocaleString() }}</p>
+        <hr />
+      </div>
+    </div>
+
+    <!-- Message si aucun signalement -->
+    <p v-else>⚠️ Aucun signalement trouvé.</p>
+  </div>
 </template>
 
 <script>
-import L from "leaflet"; // Importation de Leaflet
-import "leaflet/dist/leaflet.css"; // Importation du CSS de Leaflet
+import axios from 'axios';
 
 export default {
-  name: "MapComponent",
-  props: {
-    reports: {
-      type: Array, // Tableau des signalements
-      required: true,
-    },
-    onStatusChange: {
-      type: Function, // Callback pour notifier un changement d'état
-      required: true,
-    },
-  },
   data() {
     return {
-      map: null, // Instance de la carte
-      markers: [], // Liste des marqueurs
+      reports: [], // Liste des signalements
     };
   },
   mounted() {
-    // Initialisation de la carte
-    this.map = L.map("map").setView([51.505, -0.09], 13); // Coordonnées par défaut : Londres
-
-    // Ajout du fond de carte OpenStreetMap
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "&copy; OpenStreetMap contributors",
-    }).addTo(this.map);
-
-    // Forcer Leaflet à recalculer la taille de la carte
-    setTimeout(() => this.map.invalidateSize(), 300);
-
-    // Événement : cliquer pour ajouter un marqueur (signalement)
-    this.map.on("click", (event) => {
-      const { lat, lng } = event.latlng;
-      const report = {
-        id: Date.now(), // Générer un ID unique
-        lat,
-        lng,
-        status: "À traiter", // État initial
-      };
-      this.$emit("add-report", report); // Notifier le parent
-    });
-
-    // Initialisation des marqueurs
-    this.updateMarkers();
-  },
-  watch: {
-    // Mettre à jour les marqueurs lorsque les signalements changent
-    reports: "updateMarkers",
+    this.fetchReports();
   },
   methods: {
-    updateMarkers() {
-      // Supprimer les anciens marqueurs
-      this.markers.forEach((marker) => this.map.removeLayer(marker));
-      this.markers = [];
+    // Récupérer les signalements depuis le backend
+    async fetchReports() {
+      const token = localStorage.getItem('token'); // Vérifier le token
+      if (!token) {
+        alert('⚠️ Vous devez être connecté pour voir les signalements.');
+        this.$router.push('/login'); // Redirection si pas de token
+        return;
+      }
 
-      // Ajouter de nouveaux marqueurs
-      this.reports.forEach((report) => {
-        const marker = L.marker([report.lat, report.lng], {
-          icon: L.divIcon({
-            className: report.status === "Ramassé" ? "marker-clean" : "marker-trash",
-            html: report.status === "Ramassé" ? "✅" : "🗑️",
-            iconSize: [30, 30],
-          }),
-        })
-          .addTo(this.map)
-          .bindPopup(
-            `<strong>Signalement</strong><br>État : ${report.status}<br><button onclick="updateStatus(${report.id})">Changer l'état</button>`
-          );
-
-        // Ajouter une action au clic
-        marker.on("click", () => {
-          this.onStatusChange(report.id); // Callback pour changer l'état
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/reports/get_reports/', {
+          headers: {
+            Authorization: token,
+          },
         });
-
-        this.markers.push(marker); // Ajouter à la liste
-      });
+        this.reports = response.data; // Assigner les données récupérées à la variable `reports`
+      } catch (error) {
+        console.error('Erreur lors de la récupération des signalements:', error);
+        alert('⚠️ Une erreur est survenue lors de la récupération des signalements.');
+      }
     },
   },
 };
 </script>
 
 <style scoped>
-/* Style de la carte */
-#map {
-  width: 100%; /* Prend toute la largeur */
-  height: 500px; /* Hauteur fixe */
-  background-color: #f0f0f0; /* Fond pour s'assurer que le conteneur est visible */
-  border: 1px solid #ccc; /* Bordure pour bien visualiser */
-}
-
-/* Styles pour les icônes de marqueur */
-.marker-trash {
-  color: red;
-  font-size: 20px;
+.list-reports-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 30px;
+  background: #f7f7f7;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
-
-.marker-clean {
-  color: green;
-  font-size: 20px;
-  text-align: center;
+.list-reports-title {
+  font-size: 32px;
+  margin-bottom: 30px;
+}
+.report-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+.report-photo {
+  max-width: 200px;
+  max-height: 150px;
+  object-fit: cover;
+  margin-top: 10px;
+}
+hr {
+  margin-top: 15px;
+  border: 0;
+  border-top: 1px solid #ddd;
 }
 </style>
