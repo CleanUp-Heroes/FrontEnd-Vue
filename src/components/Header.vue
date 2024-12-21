@@ -8,7 +8,7 @@
     <nav>
       <ul class="nav-links">
         <li><router-link to="/Acceuil">Accueil</router-link></li>
-        <li><router-link to="/reports">Carte des signalements</router-link></li>
+        <li><router-link to="/reports">Liste des signalements</router-link></li>
         <li><router-link to="/login">Connexion/Inscription</router-link></li>
         <li><router-link to="/About">À propos</router-link></li>
       </ul>

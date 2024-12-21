@@ -45,6 +45,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -57,10 +59,18 @@ export default {
   },
   methods: {
     handleFileUpload(event) {
-      this.form.photo = event.target.files[0]; // Sauvegarde la photo téléchargée
+      this.form.photo = event.target.files[0]; // Récupération du fichier uploadé
     },
-    submitForm() {
-      // Validation simplifiée avec des alertes colorées
+    async submitForm() {
+      // Vérifier la présence du token d'authentification
+      const token = localStorage.getItem('token'); // Ou utilisez Vuex si vous l'avez stocké ailleurs
+      if (!token) {
+        alert('⚠️ Vous devez être connecté pour signaler un problème.');
+        this.$router.push('/login'); // Redirige l'utilisateur vers la page de connexion
+        return;
+      }
+
+      // Validation simplifiée
       if (!this.form.description || this.form.description.trim() === '') {
         alert('⚠️ La description est obligatoire.');
         return;
@@ -76,91 +86,115 @@ export default {
         return;
       }
 
-      alert('✅ Merci ! Votre problème a été signalé avec succès.');
-      console.log('Formulaire soumis:', this.form);
-      // Logique pour envoyer les données à votre API backend
+      // Préparer les données
+      const formData = new FormData();
+      formData.append('description', this.form.description);
+      formData.append('location', this.form.location);
+      if (this.form.photo) {
+        formData.append('photo', this.form.photo);
+      }
+
+      try {
+        // Envoi des données au backend avec le token dans l'en-tête
+        const response = await axios.post(
+          'http://127.0.0.1:8000/reports/report/', 
+          formData, 
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: token,  // Ajout du token dans l'en-tête
+            },
+          }
+        );
+        console.log('Réponse du backend:', response.data);
+        console.log('Réponse du token:', token);
+        alert('✅ Merci ! Votre problème a été signalé avec succès.');
+      } catch (error) {
+        console.error('Erreur lors de l\'envoi du formulaire:', error);
+        alert('⚠️ Une erreur est survenue lors de l\'envoi du formulaire.');
+      }
     },
   },
 };
 </script>
 
+
 <style scoped>
-/* Conteneur principal */
+/* Styles du formulaire (inchangés) */
 .form-container {
   width: 100%;
-  max-width: 500px;
+  max-width: 800px;
   margin: 20px auto;
-  padding: 20px;
+  padding: 30px;
   background: linear-gradient(145deg, #e6e9f0, #eef2f3);
   border-radius: 10px;
   box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
-
-/* Titre du formulaire */
 .form-title {
-  font-size: 24px;
+  font-size: 32px;
   color: #4a4a4a;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
-
-/* Champs de formulaire */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   text-align: left;
 }
-
 label {
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   display: block;
   color: #333;
 }
-
 input[type="text"],
 textarea {
   width: 100%;
-  padding: 12px;
-  font-size: 14px;
+  padding: 15px;
+  font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 8px;
   box-sizing: border-box;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
-
 input[type="text"]:focus,
 textarea:focus {
   border-color: #4caf50;
   box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
 }
-
 textarea {
-  height: 100px;
+  height: 120px;
   resize: none;
 }
-
-/* Bouton Envoyer */
 .submit-button {
   background: #4caf50;
   color: white;
-  padding: 12px 20px;
-  font-size: 16px;
+  padding: 15px 25px;
+  font-size: 18px;
   font-weight: bold;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.2s ease-in-out;
 }
-
 .submit-button:hover {
   background: #45a049;
   transform: scale(1.05);
 }
-
-/* Messages d'erreur */
 .error-message {
   color: #d32f2f;
-  font-size: 12px;
-  margin-top: 5px;
+  font-size: 14px;
+  margin-top: 8px;
+}
+@media (max-width: 768px) {
+  .form-container {
+    width: 90%;
+    max-width: 100%;
+  }
+  .form-title {
+    font-size: 28px;
+  }
+  .submit-button {
+    width: 100%;
+  }
 }
 </style>
