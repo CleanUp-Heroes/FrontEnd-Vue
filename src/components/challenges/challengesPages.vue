@@ -22,6 +22,7 @@
     </ul>
   </div>
 </template>
+
 <script>
 import axios from "axios";
 
@@ -53,7 +54,8 @@ export default {
       }
     },
     participate(challengeId, challengeName) {
-      this.$router.push(/challenges/$`{challengeId}/participate/${challengeName}`);
+      // Utilisation de la syntaxe correcte pour l'interpolation de variables
+      this.$router.push(`/challenges/${challengeId}/participate/${challengeName}`);
     },
     formatDate(dateString) {
       const options = { year: "numeric", month: "long", day: "numeric" };
@@ -65,6 +67,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .challenges-page {
   padding: 2rem;
