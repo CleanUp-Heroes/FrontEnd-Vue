@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <!-- Affiche l'entête uniquement si l'utilisateur est authentifié -->
-    <AppHeader v-if="isAuthenticated" />
+    
+    <AppHeader/>
 
     <!-- Navigation conditionnelle : affichée seulement si connecté -->
     <nav v-if="isAuthenticated" class="vertical-navigation">
@@ -46,8 +46,8 @@
       <router-view />
     </main>
 
-    <!-- Pied de page affiché uniquement si authentifié -->
-    <AppFooter v-if="isAuthenticated" />
+    
+    <AppFooter/>
   </div>
 </template>
 
