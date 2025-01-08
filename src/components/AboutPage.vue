@@ -1,4 +1,5 @@
 <template>
+  <!-- Section À propos -->
   <div class="about">
     <h1 class="title">
       <span class="highlight">🌍 À propos</span> de <span class="brand">Cleanup Heroes</span>
@@ -37,19 +38,117 @@
       <button class="cta-button">Commencez dès maintenant ! 🚀</button>
     </div>
   </div>
+
+<<<<<<< HEAD
+<script>
+export default {
+  name: "AboutPage",
+=======
+  <!-- Section Statistiques -->
+  <div class="stats-page">
+    <h2 class="stats-title">Statistiques des défis</h2>
+    <div v-if="loading">Chargement des données...</div>
+    <div v-else-if="stats">
+      <!-- Résumé des statistiques -->
+      <div class="stats-summary">
+        <div class="stats-item">
+          <h3>Nombre total de défis accomplis :</h3>
+          <p>{{ stats.completedChallengesCount }}</p>
+        </div>
+        <div class="stats-item">
+          <h3>Quantité totale réalisée :</h3>
+          <ul>
+            <li v-for="(quantity, index) in stats.totalQuantity" :key="index">
+              {{ quantity }}
+            </li>
+          </ul>
+        </div>
+        <div class="stats-item">
+          <h3>Score total :</h3>
+          <p>{{ stats.totalScore }}</p>
+        </div>
+      </div>
+
+      <!-- Liste des progressions -->
+      <div class="progress-section">
+        <h3>Progression des défis en cours :</h3>
+        <ul>
+          <li v-for="(progressItem, index) in stats.progress" :key="index">
+            <strong>{{ progressItem.challengeName }}</strong> : {{ progressItem.realizedQuantity }} ({{ progressItem.progressPercentage }}%)
+          </li>
+        </ul>
+      </div>
+    </div>
+    <p v-else>Aucune donnée statistique disponible.</p>
+  </div>
 </template>
 
 <script>
 export default {
   name: "AboutPage",
+  data() {
+    return {
+      stats: null, // Contient les statistiques récupérées depuis le backend
+      loading: true, // Indique si les données sont en cours de chargement
+    };
+  },
+  mounted() {
+    this.fetchStats(); // Récupère les statistiques dès que le composant est monté
+  },
+  methods: {
+    async fetchStats() {
+      try {
+        const token = localStorage.getItem("token"); // Récupère le token depuis localStorage
+        if (!token) {
+          console.error("Token manquant dans localStorage");
+          this.loading = false;
+          return;
+        }
+
+        // Ajouter le token dans l'en-tête Authorization
+        const response = await fetch("http://127.0.0.1:8000/challenges/statistics/", {
+          method: "GET",
+          headers: {
+            Authorization: token,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) throw new Error("Erreur lors de la récupération des données.");
+
+        const data = await response.json();
+
+        // Mapper les données directement
+        this.stats = {
+          completedChallengesCount: data.completedChallengesCount,
+          totalQuantity: data.totalQuantity,
+          totalScore: data.totalScore,
+          progress: data.progress,
+        };
+      } catch (error) {
+        console.error("Erreur :", error);
+        this.stats = null; // Si une erreur survient, pas de données
+      } finally {
+        this.loading = false; // Désactive l'état de chargement
+      }
+    },
+  },
+>>>>>>> 470b0df1c97b1f285f7ee5850efa3e178aac4eeb
 };
 </script>
 
 <style scoped>
+<<<<<<< HEAD
 /* Conteneur principal */
 .about {
   padding: 2rem;
   background: linear-gradient(135deg, #e8f5e9, #f1f8e9); /* Dégradé vert */
+=======
+/* Section À propos */
+.about {
+  padding: 2rem;
+  background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+>>>>>>> 470b0df1c97b1f285f7ee5850efa3e178aac4eeb
   color: #333;
   border-radius: 12px;
   max-width: 900px;
@@ -58,6 +157,7 @@ export default {
   animation: fadeIn 1s ease-out;
 }
 
+<<<<<<< HEAD
 /* Titre principal */
 .title {
   font-size: 2.5rem;
@@ -144,6 +244,37 @@ export default {
 
 .cta-button:hover {
   background: #388e3c;
+=======
+/* Section Statistiques */
+.stats-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f6fdfb;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.stats-title {
+  font-size: 2rem;
+  color: #1a6f4b;
+}
+
+.stats-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.stats-item {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  min-width: 250px;
+>>>>>>> 470b0df1c97b1f285f7ee5850efa3e178aac4eeb
 }
 
 /* Animations */
@@ -155,6 +286,7 @@ export default {
     opacity: 1;
   }
 }
+<<<<<<< HEAD
 
 @keyframes slideIn {
   from {
@@ -183,4 +315,6 @@ export default {
   text-align: center;
   margin-top: 2rem;
 }
+=======
+>>>>>>> 470b0df1c97b1f285f7ee5850efa3e178aac4eeb
 </style>
