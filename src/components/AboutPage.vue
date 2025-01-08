@@ -38,6 +38,7 @@
       <button class="cta-button">Commencez dès maintenant ! 🚀</button>
     </div>
   </div>
+</template>
 
 <script>
 export default {
