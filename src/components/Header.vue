@@ -1,24 +1,58 @@
 <template>
   <header class="app-header">
     <div class="logo">
-      <!-- Inclure le logo -->
       <img src="@/assets/cleanup.png" alt="Cleanup Heroes Logo" class="logo-image" />
       <h1>Cleanup Heroes</h1>
     </div>
     <nav>
       <ul class="nav-links">
         <li><router-link to="/Acceuil">Accueil</router-link></li>
-        <li><router-link to="/reports">Liste des signalements</router-link></li>
-        <li><router-link to="/login">Connexion/Inscription</router-link></li>
         <li><router-link to="/About">À propos</router-link></li>
+        <li v-if="authState.isAuthenticated">
+          <a @click="handleLogout">Déconnexion</a>
+        </li>
+        <li v-else>
+          <router-link to="/login">Connexion/Inscription</router-link>
+        </li>
       </ul>
     </nav>
   </header>
 </template>
 
 <script>
+import axios from "axios";
+import { authState, logout, updateAuthState } from '@/authState';
+
 export default {
   name: "AppHeader",
+  setup() {
+    // Met à jour l'état d'authentification au démarrage du composant
+    updateAuthState();
+
+    const handleLogout = async () => {
+      try {
+        // Envoie une requête de déconnexion au backend
+        await axios.post("http://127.0.0.1:8000/logout/", {}, {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        });
+        // Met à jour l'état global
+        logout();
+
+        // Redirige l'utilisateur vers la page de connexion
+        window.location.href = "/login"; // Alternative au router pour simplifier
+      } catch (error) {
+        console.error("Erreur lors de la déconnexion :", error);
+        alert("Erreur lors de la déconnexion. Veuillez réessayer.");
+      }
+    };
+
+    return {
+      authState,
+      handleLogout,
+    };
+  },
 };
 </script>
 
