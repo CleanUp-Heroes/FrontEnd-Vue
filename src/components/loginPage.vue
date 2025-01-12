@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import { updateAuthState } from "../authState"; // Importation directe de updateAuthState
 import axios from "axios";
 
 export default {
@@ -95,8 +96,8 @@ export default {
       lastName: "",
       email: "",
       password: "",
-      isSignup: false, // Toggle pour basculer entre inscription et connexion
-      errorMessage: "", // Message d'erreur pour l'utilisateur
+      isSignup: false,
+      errorMessage: "",
     };
   },
   methods: {
@@ -109,13 +110,16 @@ export default {
           });
 
           if (response.status === 200) {
-            localStorage.setItem("token", response.data.token); // Exemple de stockage de token
+            localStorage.setItem("token", response.data.token); // Sauvegarde du token
+            updateAuthState(); // Met à jour l'état d'authentification
             this.$router.push("/challenges");
           }
         } catch (error) {
-          this.errorMessage = "Échec de la connexion. Vérifiez vos identifiants.";
+          alert("Échec de la connexion. Vérifiez vos identifiants.");
           console.error("Erreur lors de la connexion :", error.response || error);
         }
+      } else {
+        alert("Veuillez remplir tous les champs.");
       }
     },
     async signup() {
@@ -129,7 +133,8 @@ export default {
           });
 
           if (response.status === 201) {
-            this.$router.push("/challenges");
+            alert("Votre compte a été créé avec succès.");
+            this.toggleForm(); // Bascule vers la connexion
           }
         } catch (error) {
           this.errorMessage = "Échec de l'inscription. Veuillez réessayer.";
@@ -138,8 +143,11 @@ export default {
       }
     },
     toggleForm() {
-      this.isSignup = !this.isSignup; // Bascule entre les formulaires de connexion et d'inscription
+      this.isSignup = !this.isSignup;
     },
+  },
+  created() {
+    updateAuthState(); // Vérification de l'état d'authentification lors du chargement du composant
   },
 };
 </script>

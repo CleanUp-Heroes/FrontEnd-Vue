@@ -8,6 +8,7 @@ import ReportForm from './components/ReportForm.vue';
 import loginPage from './components/loginPage.vue';
 import AboutPage from './components/AboutPage.vue';
 import AcceuilPage from './components/AcceuilPage.vue';
+import { authState } from '@/authState';
 
 
 
@@ -23,12 +24,13 @@ const routes = [
   },  
   { path: '/stats', component: challengeStats, meta: { requiresAuth: true } },
   { path: '/About', name: 'AboutPage', component: AboutPage }, 
-  { path: '/reports', component: MapComponent },
+  { path: '/reports', component: MapComponent,  meta: { requiresAuth: true } },
   //{ path: '/signalement', component: ReportForm }, // Route pour le formulaire de signalement
   {
     path: '/reportForm', // Assurez-vous que le chemin est correct
     name: 'ReportForm',
     component: ReportForm,
+    meta: { requiresAuth: true } 
   },
 
   { path: '/Acceuil', component: AcceuilPage },
@@ -43,10 +45,8 @@ const router = createRouter({
 
 // Navigation guard pour protéger les routes
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem("username");
-
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next("/login");
+  if (to.meta.requiresAuth && !authState.isAuthenticated) {
+    next('/login');
   } else {
     next();
   }

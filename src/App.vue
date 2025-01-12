@@ -15,14 +15,6 @@
           </ul>
         </li>
         <li>
-          <button @click="toggleMenu('form')" class="menu-item">
-            <span class="icon">📝</span> Formulaire
-          </button>
-          <ul v-if="activeMenu === 'form'" class="sub-menu">
-            <li><router-link to="/form">Soumettre un formulaire</router-link></li>
-          </ul>
-        </li>
-        <li>
           <button @click="toggleMenu('stats')" class="menu-item">
             <span class="icon">📊</span> Statistiques
           </button>
@@ -54,6 +46,7 @@
 <script>
 import AppHeader from "./components/Header.vue";
 import AppFooter from "./components/Footer.vue";
+import { authState, updateAuthState } from './authState';  
 
 export default {
   name: "App",
@@ -63,55 +56,51 @@ export default {
   },
   data() {
     return {
-      isAuthenticated: false, // Suivi de l'état de connexion
       activeMenu: null, // Permet de savoir quel menu est ouvert
     };
   },
-  created() {
-    this.isAuthenticated = !!localStorage.getItem("username");
+  computed: {
+    // Computed pour accéder à authState depuis le template
+    isAuthenticated() {
+      return authState.isAuthenticated;
+    },
   },
   methods: {
-    updateAuthState() {
-      this.isAuthenticated = !!localStorage.getItem("username");
-    },
     toggleMenu(menu) {
       this.activeMenu = this.activeMenu === menu ? null : menu;
     },
   },
   mounted() {
-    window.addEventListener("storage", this.updateAuthState);
+    window.addEventListener("storage", updateAuthState);
   },
   beforeUnmount() {
-    window.removeEventListener("storage", this.updateAuthState);
+    window.removeEventListener("storage", updateAuthState);
   },
 };
 </script>
 
 <style scoped>
-/* Conteneur général de la navigation */
 .vertical-navigation {
   background-color: #38bd94;
   padding: 1rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  display: flex; /* Passage à un modèle de disposition flexible */
-  justify-content: space-around; /* Espacement entre les éléments */
+  display: flex;
+  justify-content: space-around;
   align-items: center;
 }
 
-/* Liste d'éléments du menu (en ligne maintenant) */
 .vertical-navigation ul {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex; /* Disposition horizontale */
+  display: flex;
 }
 
 .vertical-navigation li {
-  margin-right: 2rem; /* Espacement entre les éléments du menu */
-  position: relative; /* Nécessaire pour que les sous-menus se positionnent correctement */
+  margin-right: 2rem;
+  position: relative;
 }
 
-/* Boutons du menu */
 .menu-item {
   background-color: #1a6f4b;
   color: white;
@@ -121,19 +110,18 @@ export default {
   padding: 0.8rem 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
-  font-size: 1.2rem; /* Taille de la police augmentée */
+  font-size: 1.2rem;
 }
 
 .menu-item:hover {
   background-color: #145d3c;
-  transform: scale(1.05); /* Effet d'agrandissement */
+  transform: scale(1.05);
 }
 
 .menu-item .icon {
   margin-right: 0.5rem;
 }
 
-/* Sous-menu */
 .sub-menu {
   list-style: none;
   margin-top: 0.5rem;
@@ -144,13 +132,12 @@ export default {
   position: absolute;
   background-color: #38bd94;
   border-radius: 5px;
-  top: 100%; /* Positionnement sous le menu parent */
+  top: 100%;
   left: 0;
   z-index: 10;
-  width: max-content; /* Ajuste la largeur du sous-menu */
+  width: max-content;
 }
 
-/* Liens dans les sous-menus */
 .sub-menu li {
   margin-bottom: 0.5rem;
 }
@@ -168,13 +155,11 @@ export default {
   background-color: #145d3c;
 }
 
-/* Affichage du sous-menu lorsque l'élément est actif */
 .vertical-navigation li:hover .sub-menu {
   display: block;
   opacity: 1;
 }
 
-/* Contenu principal */
 .main-content {
   flex: 1;
   padding: 2rem;
