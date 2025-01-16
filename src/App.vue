@@ -28,6 +28,7 @@
           </button>
           <ul v-if="activeMenu === 'reportForm'" class="sub-menu">
             <li><router-link to="/reportForm">Formulaire</router-link></li>
+            <li><router-link to="/reports">Liste des signalements</router-link></li>
           </ul>
         </li>
       </ul>

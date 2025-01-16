@@ -65,6 +65,8 @@ import ReportForm from './components/ReportForm.vue';
 import loginPage from './components/loginPage.vue';
 import AboutPage from './components/AboutPage.vue';
 import AcceuilPage from './components/AcceuilPage.vue';
+import { authState } from '@/authState';
+
 
 
 
@@ -72,14 +74,15 @@ import AcceuilPage from './components/AcceuilPage.vue';
 const routes = [
   { path: "/", redirect: "/login" }, // Redirection par défaut
   { path: '/login', component: loginPage },
-  { path: '/Page', component: challengesPage, meta: { requiresAuth: true } },
-  { 
-    path: '/form',  // Route statique pour le formulaire
-    component: challengeForm, meta: { requiresAuth: true },
-  },
+  { path: '/challenges', component: challengesPage, meta: { requiresAuth: true } },
+  {
+    path: '/challenges/:id/participate/:challengeName/',
+    component: challengeForm,
+    meta: { requiresAuth: true }
+  }, 
   { path: '/stats', component: challengeStats, meta: { requiresAuth: true } },
   { path: '/About', name: 'AboutPage', component: AboutPage }, 
-  { path: '/reports', component: MapComponent },
+  { path: '/reports', component: MapComponent,  meta: { requiresAuth: true } },
   //{ path: '/signalement', component: ReportForm }, // Route pour le formulaire de signalement
   {
     path: '/reportForm', // Assurez-vous que le chemin est correct
@@ -99,10 +102,8 @@ const router = createRouter({
 
 // Navigation guard pour protéger les routes
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem("username");
-
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next("/login");
+  if (to.meta.requiresAuth && !authState.isAuthenticated) {
+    next('/login');
   } else {
     next();
   }
