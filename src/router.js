@@ -65,6 +65,7 @@ import ReportForm from './components/ReportForm.vue';
 import loginPage from './components/loginPage.vue';
 import AboutPage from './components/AboutPage.vue';
 import AcceuilPage from './components/AcceuilPage.vue';
+import ClassementPage from './components/ClassementPage.vue';
 import { authState } from '@/authState';
 
 
@@ -89,6 +90,7 @@ const routes = [
     name: 'ReportForm',
     component: ReportForm,
   },
+  {path: '/classement', component: ClassementPage, meta: { requiresAuth: true }},
 
   { path: '/Acceuil', component: AcceuilPage },
 
