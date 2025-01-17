@@ -3,6 +3,7 @@ import ReportForm from '../components/ReportForm.vue'; // Page du formulaire
 import Map from '../components/Map.vue'; // Page de la carte
 import MapPage from '../components/MapPage.vue';
 import Acceuil from '../components/Acceuil.vue';
+import Recrutement from '../Volontariat/Recrutement.vue'; // Import du composant
 
 
 const routes = [
@@ -29,6 +30,13 @@ const routes = [
     name: 'Acceuil',
     component: Acceuil,  // La page qui contient le MapComponent
   },
+
+  // Dossier Volontariat
+    {
+      path: '/recrutement',
+      name: 'Recrutement',
+      component: Recrutement,   // la route pour le recrutement
+    },
 ];
 
 const router = createRouter({
