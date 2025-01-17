@@ -54,12 +54,13 @@
         <!-- Menu du volontariat -->
 <!-- Menu du volontariat -->
 <li>
-  <button @click="toggleMenu('volontariat')" class="menu-item">
+  <button @click="toggleMenu('Volontariat')" class="menu-item">
     <span class="icon">🤝</span> Volontariat
   </button>
-  <ul :class="{'sub-menu': true, 'active': activeMenu === 'volontariat'}">
+  <ul :class="{'sub-menu': true, 'active': activeMenu === 'Volontariat'}">
     <li><router-link to="/recrutement">Recrutement</router-link></li>
     <li><router-link to="/candidatures">Liste des Candidatures</router-link></li>
+    <li><router-link to="/validation">validation</router-link></li>
     <li><router-link to="/formation">Formation</router-link></li>
     <li><router-link to="/suivi-missions">Suivi des Missions</router-link></li>
   </ul>

@@ -72,12 +72,20 @@ import CreateEventView from "@/views/CreateEventView.vue";
 import ParticipateEventView from "@/views/ParticipateEventView.vue";
 //import HistoryView from "@/views/HistoryView.vue";
 //import HistoryView2 from "@/views/HistoryView2.vue";
+//import Recrutement from '@/components/Volontariat/Recrutement.vue';// Le bon chemin vers le composant
+
 
 
 //Vue.use(VueRouter);
 
 
 const routes = [
+
+ // {path: '/recrutement',
+     // name: 'recrutement',
+      //component: Recrutement,   // la route pour le recrutement
+  //},
+  
   { path: "/", redirect: "/login" }, // Redirection par défaut
   { path: '/login', component: loginPage },
   { path: '/challenges', component: challengesPage, meta: { requiresAuth: true } },
