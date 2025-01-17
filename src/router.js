@@ -67,8 +67,14 @@ import AboutPage from './components/AboutPage.vue';
 import AcceuilPage from './components/AcceuilPage.vue';
 import { authState } from '@/authState';
 
+//import EventListView from "@/views/EventListView.vue";
+import CreateEventView from "@/views/CreateEventView.vue";
+import ParticipateEventView from "@/views/ParticipateEventView.vue";
+//import HistoryView from "@/views/HistoryView.vue";
+//import HistoryView2 from "@/views/HistoryView2.vue";
 
 
+//Vue.use(VueRouter);
 
 
 const routes = [
@@ -91,6 +97,36 @@ const routes = [
   },
 
   { path: '/Acceuil', component: AcceuilPage },
+
+
+
+
+  /*{
+    path: "/events",
+    name: "EventList",
+    component: EventListView,
+  },*/
+  {
+    path: "/events/create",
+    name: "CreateEvent",
+    component: CreateEventView,
+  },
+  {
+    path: "/events/:id/participate",
+    name: "ParticipateEvent",
+    component: ParticipateEventView,
+    props: true,
+  },
+  /*{
+    path: "/events/history",
+    name: "History",
+    component: HistoryView,
+  },
+  {
+    path: "/events/history",
+    name: "History",
+    component: HistoryView2,
+  },*/
 
 
 ];
