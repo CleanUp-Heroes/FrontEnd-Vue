@@ -1,146 +1,235 @@
 <template>
-    <div class="validation-page">
-      <h1>Validation des Candidatures</h1>
-  
-      <section class="candidatures-list">
-        <h2>Candidatures en attente</h2>
-        <div v-if="loading">Chargement des candidatures...</div>
-        <div v-else-if="candidatures.length === 0">Aucune candidature en attente.</div>
-        <div v-else>
-          <div v-for="candidature in candidatures" :key="candidature.id" class="candidature-item">
-            <h3>{{ candidature.name }} - {{ candidature.email }}</h3>
-            <p>{{ candidature.message }}</p>
-            
-            <div class="actions">
-              <button @click="validateCandidature(candidature.id, true)">Valider</button>
-              <button @click="validateCandidature(candidature.id, false)">Refuser</button>
-            </div>
-  
-            <div v-if="candidature.status !== 'pending'">
-              <p>Status: {{ candidature.status }}</p>
-              <p>Commentaire: {{ candidature.commentaire }}</p>
-            </div>
-  
-            <div v-if="showCommentForm === candidature.id">
-              <textarea v-model="commentaire" placeholder="Ajouter un commentaire"></textarea>
-              <button @click="submitComment(candidature.id)">Envoyer le commentaire</button>
-            </div>
-          </div>
-        </div>
-      </section>
+  <div class="validation-page">
+    <h1>Validation et Affectation des Candidatures</h1>
+    <p>Validez ou rejetez les candidatures et affectez-les à des missions.</p>
+
+    <!-- Liste des candidatures -->
+    <div v-for="candidature in candidatures" :key="candidature.id" class="candidature-card">
+      <div class="candidature-info">
+        <h3>{{ candidature.name }}</h3>
+        <p><strong>Email:</strong> {{ candidature.email }}</p>
+        <p><strong>Téléphone:</strong> {{ candidature.phone }}</p>
+        <p><strong>Mission postulée:</strong> {{ getMissionTitle(candidature.missionId) }}</p>
+        <p><strong>Message:</strong> {{ candidature.message }}</p>
+        <p><strong>Expérience:</strong> {{ candidature.experience || "Non renseigné" }}</p>
+        <p><strong>Disponibilités:</strong> {{ candidature.availability }}</p>
+        <p><strong>Statut:</strong> {{ candidature.status || "En attente" }}</p>
+      </div>
+
+      <!-- Actions : Valider, Rejeter, Affecter -->
+      <div class="candidature-actions">
+        <button
+          v-if="!candidature.status || candidature.status === 'En attente'"
+          @click="validateCandidature(candidature.id)"
+          class="validate-button"
+        >
+          Valider
+        </button>
+        <button
+          v-if="!candidature.status || candidature.status === 'En attente'"
+          @click="rejectCandidature(candidature.id)"
+          class="reject-button"
+        >
+          Rejeter
+        </button>
+        <select
+          v-if="candidature.status === 'Validée'"
+          v-model="candidature.affectedMissionId"
+          @change="affectCandidature(candidature.id, candidature.affectedMissionId)"
+        >
+          <option value="">Sélectionnez une mission</option>
+          <option v-for="mission in missions" :key="mission.id" :value="mission.id">
+            {{ mission.title }}
+          </option>
+        </select>
+      </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'ValidationPage',
-    data() {
-      return {
-        candidatures: [],
-        loading: true,
-        commentaire: '',
-        showCommentForm: null,
-      };
+
+    <!-- Message si aucune candidature -->
+    <p v-if="candidatures.length === 0" class="no-candidatures">
+      Aucune candidature n'a été soumise pour le moment.
+    </p>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "ValidationPage",
+  data() {
+    return {
+      candidatures: [], // Liste des candidatures
+      missions: [], // Liste des missions disponibles
+    };
+  },
+  created() {
+    this.fetchCandidatures(); // Charger les candidatures au chargement
+    this.fetchMissions(); // Charger les missions pour l'affectation
+  },
+  methods: {
+    // Charger les candidatures depuis une API ou une source locale
+    async fetchCandidatures() {
+      try {
+        // Simuler une réponse API avec des données statiques
+        this.candidatures = [
+          {
+            id: 1,
+            name: "Jean Dupont",
+            email: "jean.dupont@example.com",
+            phone: "06 12 34 56 78",
+            missionId: 1, // Référence à la mission ID 1
+            message: "Je suis très motivé pour participer à cette mission !",
+            experience: "J'ai déjà participé à des nettoyages de plages.",
+            availability: "Week-ends",
+            status: "En attente", // Statut initial
+            affectedMissionId: null, // Mission affectée
+          },
+          {
+            id: 2,
+            name: "Marie Martin",
+            email: "marie.martin@example.com",
+            phone: "07 89 01 23 45",
+            missionId: 2, // Référence à la mission ID 2
+            message: "Je souhaite contribuer à la dépollution du canal.",
+            experience: "",
+            availability: "En semaine",
+            status: "En attente", // Statut initial
+            affectedMissionId: null, // Mission affectée
+          },
+        ];
+      } catch (error) {
+        console.error("Erreur lors du chargement des candidatures:", error);
+      }
     },
-    methods: {
-      // Récupérer les candidatures en attente
-      async fetchCandidatures() {
-        try {
-          const response = await fetch('/api/candidatures');  // Modifier l'URL si nécessaire
-          const data = await response.json();
-          this.candidatures = data.filter(c => c.status === 'pending');
-          this.loading = false;
-        } catch (error) {
-          console.error('Erreur lors du chargement des candidatures:', error);
-        }
-      },
-      
-      // Valider ou refuser une candidature
-      async validateCandidature(candidatureId, isAccepted) {
-        try {
-          const response = await fetch(`/api/candidatures/${candidatureId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              status: isAccepted ? 'accepted' : 'rejected',
-              commentaire: this.commentaire,
-            }),
-          });
-          
-          const data = await response.json();
-          this.showCommentForm = null;
-          this.fetchCandidatures(); // Recharger les candidatures après mise à jour
-          alert(data.message || 'Candidature mise à jour avec succès');
-        } catch (error) {
-          console.error('Erreur lors de la validation de la candidature:', error);
-        }
-      },
-      
-      // Afficher ou masquer le formulaire de commentaire
-      toggleCommentForm(candidatureId) {
-        this.showCommentForm = this.showCommentForm === candidatureId ? null : candidatureId;
-      },
-  
-      // Soumettre le commentaire
-      submitComment(candidatureId) {
-        if (!this.commentaire) {
-          alert('Veuillez ajouter un commentaire.');
-          return;
-        }
-        this.validateCandidature(candidatureId, true); // Valider par défaut avec commentaire
-      },
+    // Charger les missions pour l'affectation
+    async fetchMissions() {
+      try {
+        // Simuler une réponse API avec des données statiques
+        this.missions = [
+          {
+            id: 1,
+            title: "Nettoyage des plages de Marseille",
+          },
+          {
+            id: 2,
+            title: "Dépollution du canal Saint-Martin",
+          },
+          {
+            id: 3,
+            title: "Nettoyage des forêts de Fontainebleau",
+          },
+        ];
+      } catch (error) {
+        console.error("Erreur lors du chargement des missions:", error);
+      }
     },
-    mounted() {
-      this.fetchCandidatures();
+    // Valider une candidature
+    validateCandidature(candidatureId) {
+      const candidature = this.candidatures.find((c) => c.id === candidatureId);
+      if (candidature) {
+        candidature.status = "Validée";
+        this.showNotification(`Candidature de ${candidature.name} validée.`, "success");
+      }
     },
-  };
-  </script>
-  
-  <style scoped>
-  .validation-page {
-    padding: 2rem;
-  }
-  
-  .candidatures-list {
-    margin-top: 2rem;
-  }
-  
-  .candidature-item {
-    background-color: #f4f4f4;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    border-radius: 5px;
-  }
-  
-  .actions {
-    margin-top: 1rem;
-  }
-  
-  button {
-    background-color: #38bd94;
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  button:hover {
-    background-color: #145d3c;
-  }
-  
-  textarea {
-    width: 100%;
-    padding: 0.8rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  textarea:focus {
-    border-color: #38bd94;
-  }
-  </style>
-  
+    // Rejeter une candidature
+    rejectCandidature(candidatureId) {
+      const candidature = this.candidatures.find((c) => c.id === candidatureId);
+      if (candidature) {
+        candidature.status = "Rejetée";
+        this.showNotification(`Candidature de ${candidature.name} rejetée.`, "error");
+      }
+    },
+    // Affecter une candidature à une mission
+    affectCandidature(candidatureId, missionId) {
+      const candidature = this.candidatures.find((c) => c.id === candidatureId);
+      const mission = this.missions.find((m) => m.id === missionId);
+      if (candidature && mission) {
+        candidature.affectedMissionId = missionId;
+        this.showNotification(
+          `Candidature de ${candidature.name} affectée à la mission : ${mission.title}.`,
+          "info"
+        );
+      }
+    },
+    // Récupérer le titre de la mission à partir de son ID
+    getMissionTitle(missionId) {
+      const mission = this.missions.find((m) => m.id === missionId);
+      return mission ? mission.title : "Mission inconnue";
+    },
+    // Afficher une notification
+    showNotification(message, type) {
+      alert(`${type.toUpperCase()}: ${message}`); // Remplacez par un système de notifications plus élaboré si nécessaire
+    },
+  },
+};
+</script>
+
+<style scoped>
+.validation-page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.validation-page h1 {
+  color: #145d3c;
+}
+
+.candidature-card {
+  background-color: #f4f4f4;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.candidature-info {
+  flex: 1;
+}
+
+.candidature-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.validate-button {
+  background-color: #38bd94;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.validate-button:hover {
+  background-color: #145d3c;
+}
+
+.reject-button {
+  background-color: #ff4d4d;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.reject-button:hover {
+  background-color: #cc0000;
+}
+
+select {
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.no-candidatures {
+  text-align: center;
+  color: #666;
+  margin-top: 2rem;
+}
+</style>
