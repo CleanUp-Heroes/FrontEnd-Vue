@@ -3,7 +3,7 @@
     <AppHeader />
 
     <!-- Navigation conditionnelle : affichée seulement si connecté -->
-    <!--<nav v-if="isAuthenticated" class="vertical-navigation"> -->
+    <nav v-if="isAuthenticated" class="vertical-navigation"> 
       <ul> 
         <!-- Menu des défis -->
         <li>
@@ -49,8 +49,8 @@
           </ul>
         </li>
       </ul>
-    <!--</nav>-->
-
+    </nav>
+<!-- mettre volontariat dans le nav-->
         <!-- Menu du volontariat -->
 <!-- Menu du volontariat -->
 <li>
