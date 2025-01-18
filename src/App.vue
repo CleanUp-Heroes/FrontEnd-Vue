@@ -58,8 +58,7 @@
   <ul :class="{'sub-menu': true, 'active': activeMenu === 'Volontariat'}">
     <li><router-link to="/recrutement">Offres de Recrutement</router-link></li>
     <li><router-link to="/candidatures">Liste des Candidatures</router-link></li>
-    <li><router-link to="/validation">validation</router-link></li>
-    <li><router-link to="/affectation">Affectation</router-link></li>
+    <li><router-link to="/validation">Validation et Affectation</router-link></li>
     <li><router-link to="/formation">Formation</router-link></li>
     <li><router-link to="/suivi-missions">Suivi des Missions</router-link></li>
   </ul>

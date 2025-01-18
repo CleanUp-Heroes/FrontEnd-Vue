@@ -76,7 +76,7 @@ import ParticipateEventView from "@/views/ParticipateEventView.vue";
 // les modules du volontariats
 import RecrutementPage from './components/Volontariat/RecrutementPage.vue';
 import ValidationPage from './components/Volontariat/ValidationPage.vue';
-import AffectationPage from './components/Volontariat/AffectationPage.vue';
+//import AffectationPage from './components/Volontariat/AffectationPage.vue';
 import FormationPage from './components/Volontariat/FormationPage.vue';
 //import CanditaturePage from './components/Volontariat/CandidaturePage.vue';
 import CandidaturePage from './components/Volontariat/CandidaturePage.vue';
@@ -92,10 +92,10 @@ const routes = [
       component: RecrutementPage,   // la route pour le recrutement
 },
 
-{path: '/affectation',
-  name: 'affectation',
-  component: AffectationPage,   // la route pour le recrutement
-},
+//{path: '/affectation',
+//  name: 'affectation',
+  //component: AffectationPage,   // la route pour le recrutement
+//},
 
 
 {
