@@ -6,6 +6,9 @@ import Acceuil from '../components/Acceuil.vue';
 
 
 const routes = [
+
+  // Dossier Volontariat
+  
   {
     path: '/form',
     name: 'form',
@@ -16,18 +19,15 @@ const routes = [
     name: 'map',
     component: Map,
   },
-  // Ajoutez d'autres routes si nécessaire
-
   {
     path: '/reports',
     name: 'Reports',
-    component: MapPage,  // La page qui contient le MapComponent
+    component: MapPage,
   },
-
   {
     path: '/Acceuil',
     name: 'Acceuil',
-    component: Acceuil,  // La page qui contient le MapComponent
+    component: Acceuil,
   },
 ];
 

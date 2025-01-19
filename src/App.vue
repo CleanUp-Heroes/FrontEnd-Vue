@@ -3,8 +3,8 @@
     <AppHeader />
 
     <!-- Navigation conditionnelle : affichée seulement si connecté -->
-    <nav v-if="isAuthenticated" class="vertical-navigation">
-      <ul>
+    <nav v-if="isAuthenticated" class="vertical-navigation"> 
+      <ul> 
         <!-- Menu des défis -->
         <li>
           <button @click="toggleMenu('challenges')" class="menu-item">
@@ -55,8 +55,26 @@
             <li><router-link to="/events/history">Historique des événements</router-link></li>
           </ul>
         </li>
+      
+        <!-- Menu du volontariat -->
+<!-- Menu du volontariat -->
+<li>
+  <button @click="toggleMenu('Volontariat')" class="menu-item">
+    <span class="icon">🤝</span> Volontariat
+  </button>
+  <ul :class="{'sub-menu': true, 'active': activeMenu === 'Volontariat'}">
+    <li><router-link to="/recrutement">Offres de Recrutement</router-link></li>
+    <li><router-link to="/candidatures">Liste des Candidatures</router-link></li>
+    <li><router-link to="/validation">Validation et Affectation</router-link></li>
+    <li><router-link to="/formation">Formation</router-link></li>
+    <li><router-link to="/suivi-missions">Suivi des Missions</router-link></li>
+  </ul>
+</li>
       </ul>
     </nav>
+
+
+    <!--</ul> -->
 
     <!-- Contenu principal -->
     <main class="main-content">
@@ -161,7 +179,7 @@ export default {
   list-style: none;
   margin-top: 0.5rem;
   padding-left: 1.5rem;
-  display: none;
+  display: none;  /* Le sous-menu est caché par défaut */
   opacity: 0;
   transition: opacity 0.3s ease;
   position: absolute;
@@ -171,6 +189,11 @@ export default {
   left: 0;
   z-index: 10;
   width: max-content;
+}
+
+.sub-menu.active {
+  display: block;    /* Le sous-menu devient visible lorsque 'active' est ajouté */
+  opacity: 1;        /* L'animation d'opacité se déclenche */
 }
 
 .sub-menu li {

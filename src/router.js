@@ -16,11 +16,54 @@ import ParticipateEventView from "@/views/ParticipateEventView.vue";
 //import HistoryView from "@/views/HistoryView.vue";
 //import HistoryView2 from "@/views/HistoryView2.vue";
 
+// les modules du volontariats
+import RecrutementPage from './components/Volontariat/RecrutementPage.vue';
+import ValidationPage from './components/Volontariat/ValidationPage.vue';
+//import AffectationPage from './components/Volontariat/AffectationPage.vue';
+import FormationPage from './components/Volontariat/FormationPage.vue';
+//import CanditaturePage from './components/Volontariat/CandidaturePage.vue';
+import CandidaturePage from './components/Volontariat/CandidaturePage.vue';
+import SuiviMissions from './components/Volontariat/SuiviMissions.vue';
 
 //Vue.use(VueRouter);
 
 
 const routes = [
+// les modules du recrutement
+ {path: '/recrutement',
+      name: 'recrutement',
+      component: RecrutementPage,   // la route pour le recrutement
+},
+
+//{path: '/affectation',
+//  name: 'affectation',
+  //component: AffectationPage,   // la route pour le recrutement
+//},
+
+
+{
+  path: '/validation',  // La route de votre page de validation
+  name: 'validation',
+  component: ValidationPage,  // Associez le composant à cette route
+},
+
+
+{
+  path: '/formation',  // La route de votre page de validation
+  name: 'formation',
+  component: FormationPage,  // Associez le composant à cette route
+},
+
+{path: '/candidatures',
+  name: 'candidatures',
+  component: CandidaturePage,   // la route pour le recrutement
+},
+
+{path: '/suivi-missions',
+  name: 'suivi-missions',
+  component: SuiviMissions,   // la route pour le recrutement
+},
+  
   { path: "/", redirect: "/login" }, // Redirection par défaut
   { path: '/login', component: loginPage },
   { path: '/challenges', component: challengesPage, meta: { requiresAuth: true } },
