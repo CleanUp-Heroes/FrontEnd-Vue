@@ -30,6 +30,14 @@
             <li><router-link to="/reports">Carte des signalements</router-link></li>
           </ul>
         </li>
+        <li>
+          <button @click="toggleMenu('classements')" class="menu-item">
+            <span class="icon">🏆</span> Classements
+          </button>
+          <ul v-if="activeMenu === 'classements'" class="sub-menu">
+            <li><router-link to="/classement">Classement global</router-link></li>
+          </ul>
+        </li>
       </ul>
     </nav>
 
@@ -120,6 +128,17 @@ export default {
 
 .menu-item .icon {
   margin-right: 0.5rem;
+}
+
+/* Empêche que le lien actif change de couleur */
+.router-link-active {
+  color: white !important; /* Force la couleur du texte à rester blanche */
+  background-color: #1a6f4b; /* Assure que le fond reste de la même couleur que les autres éléments */
+  text-decoration: none; /* Enlève le soulignement */
+}
+
+.router-link-active:hover {
+  background-color: #145d3c; /* Garder un effet de survol sur le lien actif */
 }
 
 .sub-menu {
