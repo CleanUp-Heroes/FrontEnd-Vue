@@ -10,21 +10,14 @@
           id="description" 
           placeholder="Décrivez votre problème ici..." 
           required
+          maxlength="200"
         ></textarea>
         <p v-if="!form.description" class="error-message">⚠️ La description est obligatoire.</p>
       </div>
 
       <!-- Emplacement -->
       <div class="form-group">
-        <label for="location">📍 Emplacement</label>
-        <input 
-          type="text" 
-          v-model="form.location" 
-          id="location" 
-          placeholder="Saisissez l'adresse ou l'emplacement" 
-          required
-        />
-        <p v-if="!form.location" class="error-message">⚠️ L'emplacement est obligatoire.</p>
+        <label for="location">📍 Emplacement : ( {{ longitude }} , {{ latitude }} ) </label>
       </div>
 
       <!-- Ajouter une photo -->
@@ -76,11 +69,6 @@ export default {
         return;
       }
 
-      if (!this.form.location || this.form.location.trim() === '') {
-        alert('⚠️ L\'emplacement est obligatoire.');
-        return;
-      }
-
       if (this.form.photo && !this.form.photo.type.startsWith('image/')) {
         alert('⚠️ Le fichier téléchargé doit être une image.');
         return;
@@ -89,7 +77,8 @@ export default {
       // Préparer les données
       const formData = new FormData();
       formData.append('description', this.form.description);
-      formData.append('location', this.form.location);
+      formData.append('longitude', this.$route.query.longitude);
+      formData.append('latitude', this.$route.query.latitude);
       if (this.form.photo) {
         formData.append('photo', this.form.photo);
       }
@@ -109,10 +98,20 @@ export default {
         console.log('Réponse du backend:', response.data);
         console.log('Réponse du token:', token);
         alert('✅ Merci ! Votre problème a été signalé avec succès.');
+        this.$router.push('/reports');
+
       } catch (error) {
         console.error('Erreur lors de l\'envoi du formulaire:', error);
         alert('⚠️ Une erreur est survenue lors de l\'envoi du formulaire.');
       }
+    },
+  },
+  computed: {
+    longitude() {
+      return this.$route.query.longitude;
+    },
+    latitude() {
+      return this.$route.query.latitude;
     },
   },
 };
