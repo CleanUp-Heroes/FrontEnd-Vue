@@ -181,7 +181,7 @@ popupContent.innerHTML = `
 `;
 
 const resolveButton = document.createElement("button");
-resolveButton.textContent = "Prendre en charge les déchêts signalés.";
+resolveButton.textContent = "Prendre en charge les déchets signalés.";
 resolveButton.className = "resolve-btn";
 resolveButton.addEventListener("click", () =>
   this.resolveReport(report.report.id)
