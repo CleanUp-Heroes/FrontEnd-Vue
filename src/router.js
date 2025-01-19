@@ -65,6 +65,7 @@ import ReportForm from './components/ReportForm.vue';
 import loginPage from './components/loginPage.vue';
 import AboutPage from './components/AboutPage.vue';
 import AcceuilPage from './components/AcceuilPage.vue';
+//import InscriptionParticipation from './components/InscriptionParticipation.vue';
 import { authState } from '@/authState';
 
 //import EventListView from "@/views/EventListView.vue";
@@ -86,6 +87,11 @@ import SuiviMissions from './components/Volontariat/SuiviMissions.vue';
 
 
 const routes = [
+
+ // {path: '/Acceuil',
+   // name: 'Acceuil',
+   // component: InscriptionParticipation,   // la route pour le recrutement
+//},
 // les modules du recrutement
  {path: '/recrutement',
       name: 'recrutement',
