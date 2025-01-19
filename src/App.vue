@@ -3,7 +3,7 @@
     <AppHeader />
 
     <!-- Navigation conditionnelle : affichée seulement si connecté -->
-    <nav v-if="isAuthenticated" class="vertical-navigation">
+    <nav  class="vertical-navigation">
       <ul>
         <!-- Menu des défis -->
         <li>
