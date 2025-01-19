@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    
-    <AppHeader/>
+    <AppHeader />
 
     <!-- Navigation conditionnelle : affichée seulement si connecté -->
     <nav v-if="isAuthenticated" class="vertical-navigation">
       <ul>
+        <!-- Menu des défis -->
         <li>
           <button @click="toggleMenu('challenges')" class="menu-item">
             <span class="icon">🎯</span> Défis
@@ -14,6 +14,8 @@
             <li><router-link to="/challenges">Tous les défis</router-link></li>
           </ul>
         </li>
+
+        <!-- Menu des statistiques -->
         <li>
           <button @click="toggleMenu('stats')" class="menu-item">
             <span class="icon">📊</span> Statistiques
@@ -22,6 +24,8 @@
             <li><router-link to="/stats">Voir les statistiques</router-link></li>
           </ul>
         </li>
+
+        <!-- Menu du signalement -->
         <li>
           <button @click="toggleMenu('reportForm')" class="menu-item">
             <span class="icon">⚠️</span> Signalement
@@ -38,6 +42,19 @@
             <li><router-link to="/classement">Classement global</router-link></li>
           </ul>
         </li>
+
+        <!-- Menu des événements -->
+        <li>
+          <button @click="toggleMenu('events')" class="menu-item">
+            <span class="icon">📅</span> Événements
+          </button>
+          <ul v-if="activeMenu === 'events'" class="sub-menu">
+            <li><router-link to="/events">Liste des événements</router-link></li>
+            <li><router-link to="/events/create">Créer un événement</router-link></li>
+            <li><router-link :to="`/events/1/participate`">Participer à un événement</router-link></li>
+            <li><router-link to="/events/history">Historique des événements</router-link></li>
+          </ul>
+        </li>
       </ul>
     </nav>
 
@@ -46,15 +63,14 @@
       <router-view />
     </main>
 
-    
-    <AppFooter/>
+    <AppFooter />
   </div>
 </template>
 
 <script>
 import AppHeader from "./components/Header.vue";
 import AppFooter from "./components/Footer.vue";
-import { authState, updateAuthState } from './authState';  
+import { authState, updateAuthState } from "./authState";
 
 export default {
   name: "App",
