@@ -62,7 +62,7 @@ export default {
     try {
       // Charge les événements depuis le backend
       const token = localStorage.getItem("access_token");
-      const response = await axios.get("http://localhost:8000/api/events/", {
+      const response = await axios.get("http://127.0.0.1:8000/create-event", {
         headers: { Authorization: `Bearer ${token}` },
       });
       this.events = response.data;
@@ -93,7 +93,7 @@ export default {
       try {
         const token = localStorage.getItem("access_token");
         await axios.post(
-          `http://localhost:8000/api/events/${this.selectedEventId}/join/`,
+          `http://127.0.0.1:8000/create-event/${this.selectedEventId}/join/`,
           this.participant,
           {
             headers: { Authorization: `Bearer ${token}` },

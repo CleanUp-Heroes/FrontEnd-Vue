@@ -101,9 +101,9 @@
       async handleSubmit() {
         if (!this.validateForm()) return;
         try {
-          const token = localStorage.getItem("access_token");
-          await axios.post("http://localhost:8000/api/events/", this.event, {
-            headers: { Authorization: `Bearer ${token}` },
+          const token = localStorage.getItem('token');
+          await axios.post("http://127.0.0.1:8000/create-event/", this.event, {
+            headers: { 'Authorization': token, },
           });
           alert("Événement créé avec succès !");
           this.$router.push("/participate-event");

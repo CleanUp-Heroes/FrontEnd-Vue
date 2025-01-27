@@ -104,11 +104,13 @@ const routes = [
     path: "/events",
     name: "EventList",
     component: EventList,
+    meta: { requiresAuth: true },
   },
   {
     path: "/events/create",
     name: "CreateEvent",
     component: CreateEvent,
+    meta: { requiresAuth: true },
   },
   {
     path: "/events/:id/participate",
@@ -120,6 +122,7 @@ const routes = [
     path: "/events/history",
     name: "History",
     component: HistoryEvent,
+    meta: { requiresAuth: true },
   },
   
 
