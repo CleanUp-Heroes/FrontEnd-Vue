@@ -41,11 +41,11 @@
       <p>Choisissez une mission qui correspond à vos compétences et disponibilités.</p>
 
       <div v-for="mission in filteredMissions" :key="mission.id" class="mission">
-        <h3>{{ mission.titre }}</h3>
+        <h3>{{ mission.title }}</h3>
         <p>{{ mission.description }}</p>
-        <p><strong>Localisation:</strong> {{ mission.localisation }}</p>
-        <p><strong>Type de pollution:</strong> {{ mission.type_pollution }}</p>
-        <p><strong>Difficulté:</strong> {{ mission.difficulte }}</p>
+        <p><strong>Localisation:</strong> {{ mission.location }}</p>
+        <p><strong>Type de pollution:</strong> {{ mission.type }}</p>
+        <p><strong>Difficulté:</strong> {{ mission.difficulty }}</p>
         <p><strong>Date:</strong> {{ mission.date }}</p>
         <button @click="applyForMission(mission.id)">Rejoindre cette mission</button>
       </div>
@@ -92,44 +92,39 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   name: "RecrutementPage",
   data() {
-  return {
-    // Token d'authentification
-    authToken: localStorage.getItem('token') || null, // Remplacez par le token approprié (à récupérer dynamiquement si nécessaire)
-    missions: [],
-    filters: {
-      location: "",
-      type: "",
-      difficulty: "",
-    },
-    locations: ["Paris", "Lyon", "Marseille", "Bordeaux", "Nice", "Toulouse", "Annecy", "Nantes", "Fontainebleau"],
-    pollutionTypes: ["Plastique", "Déchets industriels", "Eau polluée", "Air pollué", "Déchets organiques"],
-    difficultyLevels: ["Facile", "Moyen", "Difficile"],
-    application: {
-      name: "",
-      email: "",
-      phone: "",
-      experience: "",
-      availability: "",
-      missionId: null,
-    },
-    notification: null, // Notification utilisateur
-    showMissions: false, // Contrôle l'affichage des missions
-  };
-},
-
+    return {
+      missions: [], // Liste des missions disponibles
+      filters: {
+        location: "",
+        type: "",
+        difficulty: "",
+      },
+      locations: ["Paris", "Lyon", "Marseille", "Bordeaux", "Nice", "Toulouse", "Annecy", "Nantes", "Fontainebleau"],
+      pollutionTypes: ["Plastique", "Déchets industriels", "Eau polluée", "Air pollué", "Déchets organiques"],
+      difficultyLevels: ["Facile", "Moyen", "Difficile"],
+      application: {
+        name: "",
+        email: "",
+        phone: "",
+        experience: "",
+        availability: "",
+        missionId: null,
+      },
+      notification: null, // Notification utilisateur
+      showMissions: false, // Contrôle l'affichage des missions
+    };
+  },
   computed: {
     // Filtre les missions en fonction des critères sélectionnés
     filteredMissions() {
-      return this.missions.filter((mission) => {
+      return this.missions.filter(mission => {
         return (
-          (!this.filters.location || mission.localisation === this.filters.location) &&
-          (!this.filters.type || mission.type_pollution === this.filters.type) &&
-          (!this.filters.difficulty || mission.difficulte === this.filters.difficulty)
+          (!this.filters.location || mission.location === this.filters.location) &&
+          (!this.filters.type || mission.type === this.filters.type) &&
+          (!this.filters.difficulty || mission.difficulty === this.filters.difficulty)
         );
       });
     },
@@ -137,58 +132,217 @@ export default {
   created() {
     this.fetchMissions(); // Charger les missions au chargement
   },
-
-
   methods: {
-    // Charger les missions depuis le backend Django
+    // Charger les missions depuis une source statique
     async fetchMissions() {
-  try {
-    const response = await axios.get("http://localhost:8000/volontariat/missions/", {
-      headers: {
-        Authorization: `Bearer ${this.authToken}`, // Envoi du token dans l'en-tête Authorization
-      }
-    });
-    this.missions = response.data;
-  } catch (error) {
-    console.error("Erreur lors de la récupération des missions:", error);
-    this.showNotification("Erreur lors de la récupération des missions.", "error");
-  }
-
+      // Simuler une réponse API avec une liste statique
+      this.missions = [
+        {
+          id: 1,
+          title: "Nettoyage des plages de Marseille",
+          description: "Participez au nettoyage des plages de Marseille pour lutter contre la pollution plastique.",
+          location: "Marseille",
+          type: "Plastique",
+          difficulty: "Moyen",
+          date: "2023-11-15",
+        },
+        {
+          id: 2,
+          title: "Dépollution du canal Saint-Martin",
+          description: "Aidez à retirer les déchets du canal Saint-Martin à Paris.",
+          location: "Paris",
+          type: "Déchets industriels",
+          difficulty: "Difficile",
+          date: "2023-11-20",
+        },
+        {
+          id: 3,
+          title: "Nettoyage des berges de la Garonne",
+          description: "Rejoignez-nous pour nettoyer les berges de la Garonne à Toulouse.",
+          location: "Toulouse",
+          type: "Déchets organiques",
+          difficulty: "Facile",
+          date: "2023-11-25",
+        },
+        {
+          id: 4,
+          title: "Opération de nettoyage à Lyon",
+          description: "Participez à une grande opération de nettoyage dans les parcs de Lyon.",
+          location: "Lyon",
+          type: "Plastique",
+          difficulty: "Moyen",
+          date: "2023-12-01",
+        },
+        {
+          id: 5,
+          title: "Nettoyage des rues de Bordeaux",
+          description: "Aidez à nettoyer les rues de Bordeaux et à sensibiliser les habitants.",
+          location: "Bordeaux",
+          type: "Déchets industriels",
+          difficulty: "Facile",
+          date: "2023-12-05",
+        },
+        {
+          id: 6,
+          title: "Dépollution du lac d'Annecy",
+          description: "Participez à la dépollution du lac d'Annecy pour préserver sa beauté naturelle.",
+          location: "Annecy",
+          type: "Eau polluée",
+          difficulty: "Difficile",
+          date: "2023-12-10",
+        },
+        {
+          id: 7,
+          title: "Nettoyage des forêts de Fontainebleau",
+          description: "Rejoignez-nous pour nettoyer les forêts de Fontainebleau et protéger la biodiversité.",
+          location: "Fontainebleau",
+          type: "Déchets organiques",
+          difficulty: "Moyen",
+          date: "2023-12-15",
+        },
+        {
+          id: 8,
+          title: "Opération de nettoyage à Nice",
+          description: "Participez à une grande opération de nettoyage sur les plages de Nice.",
+          location: "Nice",
+          type: "Plastique",
+          difficulty: "Facile",
+          date: "2023-12-20",
+        },
+        {
+          id: 9,
+          title: "Nettoyage des rives de la Seine",
+          description: "Aidez à nettoyer les rives de la Seine à Paris.",
+          location: "Paris",
+          type: "Déchets industriels",
+          difficulty: "Moyen",
+          date: "2023-12-25",
+        },
+        {
+          id: 10,
+          title: "Dépollution du port de Marseille",
+          description: "Participez à la dépollution du port de Marseille.",
+          location: "Marseille",
+          type: "Eau polluée",
+          difficulty: "Difficile",
+          date: "2024-01-01",
+        },
+        {
+          id: 11,
+          title: "Nettoyage des parcs de Lyon",
+          description: "Rejoignez-nous pour nettoyer les parcs de Lyon et rendre la ville plus propre.",
+          location: "Lyon",
+          type: "Déchets organiques",
+          difficulty: "Facile",
+          date: "2024-01-05",
+        },
+        {
+          id: 12,
+          title: "Opération de nettoyage à Toulouse",
+          description: "Participez à une grande opération de nettoyage dans les rues de Toulouse.",
+          location: "Toulouse",
+          type: "Plastique",
+          difficulty: "Moyen",
+          date: "2024-01-10",
+        },
+        {
+          id: 13,
+          title: "Nettoyage des plages de Nice",
+          description: "Aidez à nettoyer les plages de Nice pour préserver leur beauté.",
+          location: "Nice",
+          type: "Plastique",
+          difficulty: "Facile",
+          date: "2024-01-15",
+        },
+        {
+          id: 14,
+          title: "Dépollution du Rhône",
+          description: "Participez à la dépollution du Rhône à Lyon.",
+          location: "Lyon",
+          type: "Eau polluée",
+          difficulty: "Difficile",
+          date: "2024-01-20",
+        },
+        {
+          id: 15,
+          title: "Nettoyage des forêts de Bordeaux",
+          description: "Rejoignez-nous pour nettoyer les forêts autour de Bordeaux.",
+          location: "Bordeaux",
+          type: "Déchets organiques",
+          difficulty: "Moyen",
+          date: "2024-01-25",
+        },
+        {
+          id: 16,
+          title: "Opération de nettoyage à Annecy",
+          description: "Participez à une grande opération de nettoyage dans les rues d'Annecy.",
+          location: "Annecy",
+          type: "Plastique",
+          difficulty: "Facile",
+          date: "2024-02-01",
+        },
+        {
+          id: 17,
+          title: "Nettoyage des rives de la Loire",
+          description: "Aidez à nettoyer les rives de la Loire à Nantes.",
+          location: "Nantes",
+          type: "Déchets industriels",
+          difficulty: "Moyen",
+          date: "2024-02-05",
+        },
+        {
+          id: 18,
+          title: "Dépollution du port de Bordeaux",
+          description: "Participez à la dépollution du port de Bordeaux.",
+          location: "Bordeaux",
+          type: "Eau polluée",
+          difficulty: "Difficile",
+          date: "2024-02-10",
+        },
+        {
+          id: 19,
+          title: "Nettoyage des parcs de Paris",
+          description: "Rejoignez-nous pour nettoyer les parcs de Paris et rendre la ville plus propre.",
+          location: "Paris",
+          type: "Déchets organiques",
+          difficulty: "Facile",
+          date: "2024-02-15",
+        },
+        {
+          id: 20,
+          title: "Opération de nettoyage à Marseille",
+          description: "Participez à une grande opération de nettoyage dans les rues de Marseille.",
+          location: "Marseille",
+          type: "Plastique",
+          difficulty: "Moyen",
+          date: "2024-02-20",
+        },
+      ];
     },
     // Associer le formulaire à une mission spécifique
     applyForMission(missionId) {
       this.application.missionId = missionId;
       this.showNotification(`Vous postulez pour la mission ID : ${missionId}`, "info");
     },
-
-
-    // Soumettre la candidature via l'API Django
+    // Soumettre la candidature via une API
     async submitApplication() {
-  try {
-    const response = await axios.post("http://localhost:8000/volontariat/candidatures/", {
-      name: this.application.name,
-      email: this.application.email,
-      phone: this.application.phone,
-      mission: this.application.missionId,
-      experience: this.application.experience,
-      availability: this.application.availability,
-    }, {
-      headers: {
-        Authorization: `Bearer ${this.authToken}`, // Envoi du token dans l'en-tête Authorization
+      try {
+        const response = await fetch("https://api.example.com/applications", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.application),
+        });
+
+        if (response.ok) {
+          this.showNotification("Candidature envoyée avec succès. Merci pour votre engagement !", "success");
+          this.resetForm();
+        } else {
+          this.showNotification("Erreur lors de l’envoi de la candidature.", "error");
+        }
+      } catch (error) {
+        console.error("Erreur:", error);
+        this.showNotification("Une erreur est survenue. Veuillez réessayer plus tard.", "error");
       }
-    });
-
-    if (response.status === 201) {
-      this.showNotification("Candidature envoyée avec succès. Merci pour votre engagement !", "success");
-      this.resetForm();
-    } else {
-      this.showNotification("Erreur lors de l’envoi de la candidature.", "error");
-    }
-  } catch (error) {
-    console.error("Erreur:", error);
-    this.showNotification("Une erreur est survenue. Veuillez réessayer plus tard.", "error");
-  }
-
     },
     // Réinitialiser le formulaire après envoi
     resetForm() {
@@ -215,7 +369,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .recrutement-page {
