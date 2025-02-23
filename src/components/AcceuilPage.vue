@@ -9,7 +9,9 @@
     <section class="cta-section">
       <h2>Agissez pour la planète!</h2>
       <p>Rejoignez notre communauté et commencez à participer à des actions concrètes pour un avenir plus propre.</p>
-      <button @click="goToSignUp">S'inscrire et Participer</button>
+      <!--<button @click="goToSignUp">S'inscrire et Participer</button>-->
+      <button @click="$router.push({ name: 'login' })">S'inscrire et Participer</button>
+
     </section>
   </div>
 </template>

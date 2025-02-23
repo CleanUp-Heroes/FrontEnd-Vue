@@ -37,27 +37,10 @@
               Voici quelques infos utiles (et drôles) pour vous préparer :
             </p>
             <ul>
-
               <li>✅ <strong>Astuce n°1 :</strong> Portez des gants. Les déchets ne sont pas toujours coopératifs.</li>
-    <li>✅ <strong>Astuce n°2 :</strong> Hydratez-vous. Un héros déshydraté est un héros moins efficace.</li>
-    <li>✅ <strong>Astuce n°3 :</strong> Travaillez en équipe. Même les super-héros ont besoin d'amis !</li>
-    <li>✅ <strong>Astuce n°4 :</strong> Utilisez des sacs réutilisables pour collecter les déchets. Les sacs en plastique, c'est *so last century* ! 🛍️</li>
-    <li>✅ <strong>Astuce n°5 :</strong> Portez des chaussures solides. Les déchets pointus ne font pas de cadeaux ! 👞</li>
-    <li>✅ <strong>Astuce n°6 :</strong> Apportez une pince à déchets. Parce que se baisser 100 fois, c'est bon pour les fessiers, mais pas pour le dos ! 🦾</li>
-    <li>✅ <strong>Astuce n°7 :</strong> Triez vos déchets sur place. Le recyclage, c'est comme le triage des Pokémons : il faut tout catégoriser ! ♻️</li>
-    <li>✅ <strong>Astuce n°8 :</strong> Utilisez une bouteille d'eau réutilisable. La planète vous remerciera, et votre portefeuille aussi ! 💧</li>
-    <li>✅ <strong>Astuce n°9 :</strong> Prenez des pauses régulières. Même les super-héros ont besoin de souffler un peu ! ☕</li>
-    <li>✅ <strong>Astuce n°10 :</strong> Sensibilisez les passants. Un sourire et une explication peuvent faire des miracles ! 😊</li>
-    <li>✅ <strong>Astuce n°11 :</strong> Équipez-vous d'un chapeau et de crème solaire. Le soleil est un allié, mais il peut être traître ! ☀️</li>
-    <li>✅ <strong>Astuce n°12 :</strong> Gardez un petit sac pour les déchets spéciaux (comme les piles ou les médicaments). Ils méritent un traitement VIP ! 🎁</li>
-    <li>✅ <strong>Astuce n°13 :</strong> Prenez des photos avant/après. Rien de mieux qu'une transformation spectaculaire pour motiver les troupes ! 📸</li>
-    <li>✅ <strong>Astuce n°14 :</strong> Écoutez de la musique motivante. Un peu de Beyoncé ou de Queen pour donner du rythme à votre mission ! 🎶</li>
-    <li>✅ <strong>Astuce n°15 :</strong> Faites attention aux animaux. Certains déchets peuvent être dangereux pour nos amis à quatre pattes. 🐾</li>
-    <li>✅ <strong>Astuce n°16 :</strong> Utilisez une application de suivi des déchets. Partagez vos progrès et inspirez d'autres héros ! 📱</li>
-    <li>✅ <strong>Astuce n°17 :</strong> Organisez des défis entre équipes. Qui ramassera le plus de déchets en 10 minutes ? 🏆</li>
-    <li>✅ <strong>Astuce n°18 :</strong> Pensez à ramener un goûter éco-responsable. Des fruits locaux, c'est bon pour vous et pour la planète ! 🍎</li>
-    <li>✅ <strong>Astuce n°19 :</strong> Utilisez des gants colorés. Parce que sauver la planète, c'est aussi une question de style ! 🌈</li>
-    <li>✅ <strong>Astuce n°20 :</strong> Partagez vos exploits sur les réseaux sociaux. Montrez au monde que vous êtes un héros ! 🌍✨</li>
+              <li>✅ <strong>Astuce n°2 :</strong> Hydratez-vous. Un héros déshydraté est un héros moins efficace.</li>
+              <li>✅ <strong>Astuce n°3 :</strong> Travaillez en équipe. Même les super-héros ont besoin d'amis !</li>
+              <!-- Ajoutez les autres astuces ici -->
             </ul>
           </div>
         </div>
@@ -145,8 +128,6 @@ export default {
             documentUrl: "/documents/gestion-plastique.pdf",
             videoUrls: [
               "https://www.youtube.com/embed/REh-GAV1cfA", // Lien YouTube
-              //"https://www.youtube.com/embed/fZHPKpaE0ZA", // Lien YouTube
-              //"https://www.youtube.com/embed/0UR1wBWMuMc", // Lien YouTube
             ],
             isCompleted: false, // Statut de la formation
             quote: "Le plastique, c'est pas fantastique... mais le recyclage, si !",
@@ -162,29 +143,46 @@ export default {
     },
     // Marquer une formation comme terminée
     async markFormationAsCompleted(formationId) {
-      const formation = this.formations.find((f) => f.id === formationId);
-      if (formation) {
-        formation.isCompleted = true;
-        // Simuler un appel API pour mettre à jour le statut de la formation
-        try {
-          await fetch(`https://api.example.com/formations/${formationId}/complete`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: 123 }), // Remplacez par l'ID de l'utilisateur connecté
-          });
-          this.showNotification(
-            `Félicitations ! Vous avez terminé la formation "${formation.title}". 🎉`,
-            "success"
-          );
-        } catch (error) {
-          console.error("Erreur lors de la confirmation de la formation:", error);
-          this.showNotification(
-            "Oups ! Une erreur est survenue. Veuillez réessayer plus tard.",
-            "error"
-          );
-        }
+  const formation = this.formations.find((f) => f.id === formationId);
+  if (formation) {
+    try {
+      const token = localStorage.getItem("authToken"); // Supposons que tu stockes le token dans le localStorage
+      if (!token) {
+        throw new Error("Token is missing"); // Assure-toi que le token est disponible
       }
-    },
+
+      const response = await fetch(`http://localhost:8000/formations/${formationId}/complete/`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` // Ajoute le token ici
+        },
+        body: JSON.stringify({ userId: 123 }), // Remplace par la bonne information si nécessaire
+      });
+
+      if (response.ok) {
+        formation.isCompleted = true;
+        this.showNotification(
+          `Félicitations ! Vous avez terminé la formation "${formation.title}". 🎉`,
+          "success"
+        );
+      } else {
+        const errorData = await response.json();
+        console.error("Erreur lors de la confirmation de la formation:", errorData.error);
+        this.showNotification(
+          "Oups ! Une erreur est survenue. Veuillez réessayer plus tard.",
+          "error"
+        );
+      }
+    } catch (error) {
+      console.error("Erreur lors de la confirmation de la formation:", error);
+      this.showNotification(
+        "Oups ! Une erreur est survenue. Veuillez réessayer plus tard.",
+        "error"
+      );
+    }
+  }
+},
     // Afficher une notification
     showNotification(message, type) {
       this.notification = { message, type };
