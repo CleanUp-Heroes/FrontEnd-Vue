@@ -1,0 +1,19 @@
+[
+    {
+      "question": "Quelle est la principale cause du réchauffement climatique ?",
+      "option_a": "Les éruptions volcaniques",
+      "option_b": "Les émissions de gaz à effet de serre",
+      "option_c": "Les marées",
+      "option_d": "Les rayons du soleil",
+      "correct_option": "B"
+    },
+    {
+      "question": "Quelle action permet de réduire son empreinte carbone ?",
+      "option_a": "Prendre l’avion plus souvent",
+      "option_b": "Manger moins de viande",
+      "option_c": "Laisser les lumières allumées",
+      "option_d": "Utiliser des sacs en plastique",
+      "correct_option": "B"
+    }
+  ]
+  

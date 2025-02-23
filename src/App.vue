@@ -63,6 +63,17 @@
     <li><router-link to="/suivi-missions">Suivi des Missions</router-link></li>
   </ul>
 </li>
+<!-- Menu du Quiz -->
+<li>
+  <button @click="toggleMenu('QuizEnvironnementaux')" class="menu-item">
+    <span class="icon">🌍</span> Quiz Environnementaux
+  </button>
+  <ul :class="{'sub-menu': true, 'active': activeMenu === 'QuizEnvironnementaux'}">
+    <li><router-link to="/participer-quiz">Participer au Quiz</router-link></li>
+    <li><router-link to="/obtention-recompense">Obtention de la Récompense</router-link></li>
+  </ul>
+</li>
+
       </ul>
     </nav>
 

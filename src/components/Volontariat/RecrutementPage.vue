@@ -97,28 +97,31 @@ import axios from "axios";
 export default {
   name: "RecrutementPage",
   data() {
-    return {
-      missions: [], // Liste des missions disponibles
-      filters: {
-        location: "",
-        type: "",
-        difficulty: "",
-      },
-      locations: ["Paris", "Lyon", "Marseille", "Bordeaux", "Nice", "Toulouse", "Annecy", "Nantes", "Fontainebleau"],
-      pollutionTypes: ["Plastique", "Déchets industriels", "Eau polluée", "Air pollué", "Déchets organiques"],
-      difficultyLevels: ["Facile", "Moyen", "Difficile"],
-      application: {
-        name: "",
-        email: "",
-        phone: "",
-        experience: "",
-        availability: "",
-        missionId: null,
-      },
-      notification: null, // Notification utilisateur
-      showMissions: false, // Contrôle l'affichage des missions
-    };
-  },
+  return {
+    // Token d'authentification
+    authToken: localStorage.getItem('token') || null, // Remplacez par le token approprié (à récupérer dynamiquement si nécessaire)
+    missions: [],
+    filters: {
+      location: "",
+      type: "",
+      difficulty: "",
+    },
+    locations: ["Paris", "Lyon", "Marseille", "Bordeaux", "Nice", "Toulouse", "Annecy", "Nantes", "Fontainebleau"],
+    pollutionTypes: ["Plastique", "Déchets industriels", "Eau polluée", "Air pollué", "Déchets organiques"],
+    difficultyLevels: ["Facile", "Moyen", "Difficile"],
+    application: {
+      name: "",
+      email: "",
+      phone: "",
+      experience: "",
+      availability: "",
+      missionId: null,
+    },
+    notification: null, // Notification utilisateur
+    showMissions: false, // Contrôle l'affichage des missions
+  };
+},
+
   computed: {
     // Filtre les missions en fonction des critères sélectionnés
     filteredMissions() {
@@ -134,44 +137,58 @@ export default {
   created() {
     this.fetchMissions(); // Charger les missions au chargement
   },
+
+
   methods: {
     // Charger les missions depuis le backend Django
     async fetchMissions() {
-      try {
-        const response = await axios.get("http://localhost:8000/volontariat/missions/");
-        this.missions = response.data;
-      } catch (error) {
-        console.error("Erreur lors de la récupération des missions:", error);
-        this.showNotification("Erreur lors de la récupération des missions.", "error");
+  try {
+    const response = await axios.get("http://localhost:8000/volontariat/missions/", {
+      headers: {
+        Authorization: `Bearer ${this.authToken}`, // Envoi du token dans l'en-tête Authorization
       }
+    });
+    this.missions = response.data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des missions:", error);
+    this.showNotification("Erreur lors de la récupération des missions.", "error");
+  }
+
     },
     // Associer le formulaire à une mission spécifique
     applyForMission(missionId) {
       this.application.missionId = missionId;
       this.showNotification(`Vous postulez pour la mission ID : ${missionId}`, "info");
     },
+
+
     // Soumettre la candidature via l'API Django
     async submitApplication() {
-      try {
-        const response = await axios.post("http://localhost:8000/volontariat/candidatures/", {
-          name: this.application.name,
-          email: this.application.email,
-          phone: this.application.phone,
-          mission: this.application.missionId,
-          experience: this.application.experience,
-          availability: this.application.availability,
-        });
-
-        if (response.status === 201) {
-          this.showNotification("Candidature envoyée avec succès. Merci pour votre engagement !", "success");
-          this.resetForm();
-        } else {
-          this.showNotification("Erreur lors de l’envoi de la candidature.", "error");
-        }
-      } catch (error) {
-        console.error("Erreur:", error);
-        this.showNotification("Une erreur est survenue. Veuillez réessayer plus tard.", "error");
+  try {
+    const response = await axios.post("http://localhost:8000/volontariat/candidatures/", {
+      name: this.application.name,
+      email: this.application.email,
+      phone: this.application.phone,
+      mission: this.application.missionId,
+      experience: this.application.experience,
+      availability: this.application.availability,
+    }, {
+      headers: {
+        Authorization: `Bearer ${this.authToken}`, // Envoi du token dans l'en-tête Authorization
       }
+    });
+
+    if (response.status === 201) {
+      this.showNotification("Candidature envoyée avec succès. Merci pour votre engagement !", "success");
+      this.resetForm();
+    } else {
+      this.showNotification("Erreur lors de l’envoi de la candidature.", "error");
+    }
+  } catch (error) {
+    console.error("Erreur:", error);
+    this.showNotification("Une erreur est survenue. Veuillez réessayer plus tard.", "error");
+  }
+
     },
     // Réinitialiser le formulaire après envoi
     resetForm() {
@@ -198,6 +215,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .recrutement-page {
