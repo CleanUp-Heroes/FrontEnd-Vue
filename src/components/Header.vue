@@ -8,6 +8,7 @@
       <ul class="nav-links">
         <li><router-link to="/Acceuil">Accueil</router-link></li>
         <li><router-link to="/About">À propos</router-link></li>
+        <li><router-link to="/Forum">Forum</router-link></li>
         <li v-if="authState.isAuthenticated">
           <a @click="handleLogout">Déconnexion</a>
         </li>

@@ -8,6 +8,9 @@ import loginPage from './components/loginPage.vue';
 import AboutPage from './components/AboutPage.vue';
 import AcceuilPage from './components/AcceuilPage.vue';
 import ClassementPage from './components/ClassementPage.vue';
+import CreateSubject from './components/forum/create_topic.vue';
+import ForumTopics from '@/components/forum/topics_list.vue';
+import ForumTopicDetail from '@/components/forum/topic_detail.vue';
 import { authState } from '@/authState';
 
 //import EventListView from "@/views/EventListView.vue";
@@ -84,6 +87,12 @@ const routes = [
   {path: '/classement', component: ClassementPage, meta: { requiresAuth: true }},
 
   { path: '/Acceuil', component: AcceuilPage },
+
+  {
+    path: '/forum/topic/new', name: 'ForumCreateTopic ', component: CreateSubject, meta : { requiresAuth: true }
+  },
+  { path: '/forum', name: 'ForumTopics', component: ForumTopics },
+  { path: '/forum/topic/:id', name: 'ForumTopicDetail', component: ForumTopicDetail, props: true },
 
 
 
