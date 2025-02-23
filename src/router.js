@@ -82,7 +82,9 @@ import FormationPage from './components/Volontariat/FormationPage.vue';
 //import CanditaturePage from './components/Volontariat/CandidaturePage.vue';
 import CandidaturePage from './components/Volontariat/CandidaturePage.vue';
 import SuiviMissions from './components/Volontariat/SuiviMissions.vue';
+
 import QuizComponent from './components/QuizEnvironnement/QuizComponent.vue';
+import ObtentionRecompense from '@/components/QuizEnvironnement/ObtentionRecompense.vue';
 
 //Vue.use(VueRouter);
 
@@ -90,9 +92,11 @@ import QuizComponent from './components/QuizEnvironnement/QuizComponent.vue';
 const routes = [
 
   {path: '/participer-quiz',
-    name: 'participer-quiz',
+    name: 'Participer au Quiz',
     component: QuizComponent,   // la route pour le recrutement
 },
+
+{ path: '/obtention-recompense', component: ObtentionRecompense },
 
  // {path: '/Acceuil',
    // name: 'Acceuil',
