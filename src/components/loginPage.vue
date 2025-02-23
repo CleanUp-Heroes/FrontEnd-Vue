@@ -111,6 +111,7 @@ export default {
 
           if (response.status === 200) {
             localStorage.setItem("token", response.data.token); // Sauvegarde du token
+            localStorage.setItem("isModerator", response.data.is_moderator); // Sauvegarde du statut de modérateur
             updateAuthState(); // Met à jour l'état d'authentification
             this.$router.push("/challenges");
           }
