@@ -8,6 +8,7 @@ import loginPage from './components/loginPage.vue';
 import AboutPage from './components/AboutPage.vue';
 import AcceuilPage from './components/AcceuilPage.vue';
 import ClassementPage from './components/ClassementPage.vue';
+//import InscriptionParticipation from './components/InscriptionParticipation.vue';
 import { authState } from '@/authState';
 
 //import EventListView from "@/views/EventListView.vue";
@@ -25,12 +26,27 @@ import FormationPage from './components/Volontariat/FormationPage.vue';
 import CandidaturePage from './components/Volontariat/CandidaturePage.vue';
 import SuiviMissions from './components/Volontariat/SuiviMissions.vue';
 
+import QuizComponent from './components/QuizEnvironnement/QuizComponent.vue';
+import ObtentionRecompense from '@/components/QuizEnvironnement/ObtentionRecompense.vue';
+
 //Vue.use(VueRouter);
 
 
 const routes = [
+
+  {path: '/participer-quiz',
+    name: 'Participer au Quiz',
+    component: QuizComponent,   // la route pour le recrutement
+},
+
+{ path: '/obtention-recompense', component: ObtentionRecompense },
+
+ // {path: '/Acceuil',
+   // name: 'Acceuil',
+   // component: InscriptionParticipation,   // la route pour le recrutement
+//},
 // les modules du recrutement
- {path: '/recrutement',
+{path: '/recrutement',
       name: 'recrutement',
       component: RecrutementPage,   // la route pour le recrutement
 },
