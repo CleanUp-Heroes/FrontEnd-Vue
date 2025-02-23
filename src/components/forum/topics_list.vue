@@ -1,26 +1,56 @@
 <template>
   <div class="forum-page">
     <h2 class="forum-title">Sujets du Forum</h2>
-    <div v-if="loading">Chargement des sujets...</div>
-
-    <div v-else-if="topics.length > 0">
-      <ul class="forum-list">
-        <li v-for="topic in topics" :key="topic.id" class="forum-item">
-          <router-link :to="`/forum/topic/${topic.id}`" class="forum-link">
-            <h3>{{ topic.title }}</h3>
-          </router-link>
-          <p class="forum-meta">
-            Posté par {{ topic.author }} - {{ formatDate(topic.created_at) }}
-          </p>
-          <p class="forum-stats">
-            👍 {{ topic.like_count }} | 💬 {{ topic.reply_count }}
-            <button class="report-button" @click="openReportModal(topic.id)">🚨 Signaler</button>
-          </p>
-        </li>
-      </ul>
+     <!-- Bouton pour créer un sujet, affiché en dehors du bloc conditionnel -->
+     <button class="create-topic-button" @click="openCreateTopicModal">Créer un sujet</button>
+    <div v-if="loading">
+      Chargement des sujets...
+    </div>
+    <div v-else>
+      <div v-if="topics.length > 0">
+        <ul class="forum-list">
+          <li v-for="topic in topics" :key="topic.id" class="forum-item">
+            <router-link :to="`/forum/topic/${topic.id}`" class="forum-link">
+              <h3>{{ topic.title }}</h3>
+            </router-link>
+            <p class="forum-meta">
+              Posté par {{ topic.author }} - {{ formatDate(topic.created_at) }}
+            </p>
+            <p class="forum-stats">
+              👍 {{ topic.like_count }} | 💬 {{ topic.reply_count }}
+              <button class="report-button" @click="openReportModal(topic.id)">🚨 Signaler</button>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p v-else>Aucun sujet trouvé.</p>
+      
+     
     </div>
 
-    <p v-else>Aucun sujet trouvé.</p>
+    <!-- Modal de création de sujet -->
+    <div v-if="showCreateTopicModal" class="modal-overlay">
+      <div class="modal">
+        <h3>Créer un nouveau sujet</h3>
+        <form @submit.prevent="submitCreateTopic">
+          <label for="title">Titre :</label>
+          <input type="text" id="title" v-model="newTopic.title" required>
+
+          <label for="content">Contenu :</label>
+          <textarea id="content" v-model="newTopic.content" required></textarea>
+
+          <label for="category">Catégorie :</label>
+          <!-- <select id="category" v-model="newTopic.category" required> -->
+            <!-- <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option> -->
+          <!-- </select> -->
+
+          <div class="modal-actions">
+            <button type="submit">Créer le sujet</button>
+            <button type="button" @click="closeCreateTopicModal">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- Modal de signalement -->
     <div v-if="showReportModal" class="modal-overlay">
@@ -37,6 +67,7 @@
   </div>
 </template>
 
+
 <script>
 export default {
   name: "TopicsList",
@@ -45,12 +76,20 @@ export default {
       topics: [],
       loading: true,
       showReportModal: false,
+      showCreateTopicModal: false,
       reportReason: "",
       selectedTopicId: null,
+      newTopic: {
+        title: "",
+        content: "",
+        category: "",
+      },
+      categories: [],
     };
   },
   mounted() {
     this.fetchTopics();
+    this.fetchCategories();
   },
   methods: {
     async fetchTopics() {
@@ -74,6 +113,15 @@ export default {
         console.error("Erreur :", error);
       } finally {
         this.loading = false;
+      }
+    },
+    async fetchCategories() {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/forum/categories/");
+        if (!response.ok) throw new Error("Erreur lors de la récupération des catégories.");
+        this.categories = await response.json();
+      } catch (error) {
+        console.error("Erreur :", error);
       }
     },
     formatDate(dateString) {
@@ -114,11 +162,111 @@ export default {
         alert("Une erreur s'est produite lors du signalement.");
       }
     },
+    openCreateTopicModal() {
+      this.showCreateTopicModal = true;
+      this.newTopic = {
+        title: "",
+        content: "",
+        category: "",
+      };
+    },
+    closeCreateTopicModal() {
+      this.showCreateTopicModal = false;
+    },
+    async submitCreateTopic() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Vous devez être connecté pour créer un sujet.");
+          return;
+        }
+        const response = await fetch("http://127.0.0.1:8000/forum/create_topic/", {
+          method: "POST",
+          headers: {
+            "Authorization": token,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.newTopic),
+        });
+        if (!response.ok) throw new Error("Échec de la création du sujet.");
+        alert("Sujet créé avec succès !");
+        this.closeCreateTopicModal();
+        this.fetchTopics();
+      } catch (error) {
+        console.error("Erreur :", error);
+        alert("Une erreur s'est produite lors de la création du sujet.");
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
+/* Style du bouton de création de sujet */
+.create-topic-button {
+  background: #1a6f4b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.create-topic-button:hover {
+  background: #145d36;
+}
+
+/* Modal de création de sujet */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: 300px;
+  text-align: center;
+}
+
+.modal input,
+.modal textarea,
+.modal select {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal-actions button {
+  background: #1a6f4b;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.modal-actions button:last-child {
+  background: #ff6b6b;
+}
+
 .report-button {
   background: #ff6b6b;
   color: white;

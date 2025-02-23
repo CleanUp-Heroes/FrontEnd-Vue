@@ -27,6 +27,7 @@ import FormationPage from './components/Volontariat/FormationPage.vue';
 //import CanditaturePage from './components/Volontariat/CandidaturePage.vue';
 import CandidaturePage from './components/Volontariat/CandidaturePage.vue';
 import SuiviMissions from './components/Volontariat/SuiviMissions.vue';
+import CreateTopic from './components/forum/create_topic.vue';
 import BoardModerator from './components/forum/boards_moderators.vue';
 
 //Vue.use(VueRouter);
@@ -96,6 +97,7 @@ const routes = [
   { path: '/forum/topic/:id', name: 'ForumTopicDetail', component: ForumTopicDetail, props: true },
 
   { path: '/board_reports', name: 'BoardModerator', component: BoardModerator, meta: { requiresAuth: true } },
+  { path: '/create_sujet', name: 'CreateTopic', component: CreateTopic, meta: { requiresAuth: true } },
 
 
 
