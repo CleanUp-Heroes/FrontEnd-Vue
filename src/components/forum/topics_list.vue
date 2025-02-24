@@ -1,26 +1,51 @@
 <template>
   <div class="forum-page">
     <h2 class="forum-title">Sujets du Forum</h2>
-    <div v-if="loading">Chargement des sujets...</div>
-
-    <div v-else-if="topics.length > 0">
-      <ul class="forum-list">
-        <li v-for="topic in topics" :key="topic.id" class="forum-item">
-          <router-link :to="`/forum/topic/${topic.id}`" class="forum-link">
-            <h3>{{ topic.title }}</h3>
-          </router-link>
-          <p class="forum-meta">
-            Posté par {{ topic.author }} - {{ formatDate(topic.created_at) }}
-          </p>
-          <p class="forum-stats">
-            👍 {{ topic.like_count }} | 💬 {{ topic.reply_count }}
-            <button class="report-button" @click="openReportModal(topic.id)">🚨 Signaler</button>
-          </p>
-        </li>
-      </ul>
+     <!-- Bouton pour créer un sujet, affiché en dehors du bloc conditionnel -->
+     <button class="create-topic-button" @click="openCreateTopicModal">Créer un sujet</button>
+    <div v-if="loading">
+      Chargement des sujets...
+    </div>
+    <div v-else>
+      <div v-if="topics.length > 0">
+        <ul class="forum-list">
+          <li v-for="topic in topics" :key="topic.id" class="forum-item">
+            <router-link :to="`/forum/topic/${topic.id}`" class="forum-link">
+              <h3>{{ topic.title }}</h3>
+            </router-link>
+            <p class="forum-meta">
+              Posté par {{ topic.author }} - {{ formatDate(topic.created_at) }}
+            </p>
+            <p class="forum-stats">
+              👍 {{ topic.like_count }} | 💬 {{ topic.reply_count }}
+              <button class="report-button" @click="openReportModal(topic.id)">🚨 Signaler</button>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p v-else>Aucun sujet trouvé.</p>
+      
+     
     </div>
 
-    <p v-else>Aucun sujet trouvé.</p>
+    <!-- Modal de création de sujet -->
+    <div v-if="showCreateTopicModal" class="modal-overlay">
+      <div class="modal">
+        <h3>Créer un nouveau sujet</h3>
+        <form @submit.prevent="submitCreateTopic">
+          <label for="title">Titre :</label>
+          <input type="text" id="title" v-model="newTopic.title" required>
+
+          <label for="content">Contenu :</label>
+          <textarea id="content" v-model="newTopic.content" required></textarea>
+
+          <div class="modal-actions">
+            <button type="submit">Créer le sujet</button>
+            <button type="button" @click="closeCreateTopicModal">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- Modal de signalement -->
     <div v-if="showReportModal" class="modal-overlay">
@@ -37,6 +62,7 @@
   </div>
 </template>
 
+
 <script>
 export default {
   name: "TopicsList",
@@ -45,8 +71,14 @@ export default {
       topics: [],
       loading: true,
       showReportModal: false,
+      showCreateTopicModal: false,
       reportReason: "",
       selectedTopicId: null,
+      newTopic: {
+        title: "",
+        content: "",
+      },
+      categories: [],
     };
   },
   mounted() {
@@ -114,23 +146,57 @@ export default {
         alert("Une erreur s'est produite lors du signalement.");
       }
     },
+    openCreateTopicModal() {
+      this.showCreateTopicModal = true;
+      this.newTopic = {
+        title: "",
+        content: "",
+      };
+    },
+    closeCreateTopicModal() {
+      this.showCreateTopicModal = false;
+    },
+    async submitCreateTopic() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Vous devez être connecté pour créer un sujet.");
+          return;
+        }
+        const response = await fetch("http://127.0.0.1:8000/forum/create_topic/", {
+          method: "POST",
+          headers: {
+            "Authorization": token,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.newTopic),
+        });
+        if (!response.ok) throw new Error("Échec de la création du sujet.");
+        alert("Sujet créé avec succès !");
+        this.closeCreateTopicModal();
+        this.fetchTopics();
+      } catch (error) {
+        console.error("Erreur :", error);
+        alert("Une erreur s'est produite lors de la création du sujet.");
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
-.report-button {
-  background: #ff6b6b;
+.create-topic-button {
+  background: #1a6f4b;
   color: white;
   border: none;
-  padding: 5px 10px;
-  font-size: 0.9rem;
+  padding: 10px 20px;
+  font-size: 1rem;
   border-radius: 5px;
   cursor: pointer;
-  margin-left: 10px;
+  margin-bottom: 20px;
 }
-.report-button:hover {
-  background: #e63946;
+.create-topic-button:hover {
+  background: #145d36;
 }
 .modal-overlay {
   position: fixed;
@@ -143,19 +209,73 @@ export default {
   align-items: center;
   justify-content: center;
 }
+.modal-overlay-sujet {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 110vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .modal {
-  background: white;
+  max-width: 600px; /* Limite la largeur */
+  width: 90%; /* S'adapte aux petits écrans */
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  width: 300px;
+  box-sizing: border-box;
+  background: white;
+  border-radius: 8px;
+}
+
+.modal-title {
   text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
 }
+
+.modal input,
+.modal textarea,
+.modal select {
+  width: 100%; /* Utilisation de toute la largeur disponible */
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Empêche le dépassement */
+}
+
 .modal textarea {
-  width: 100%;
-  height: 80px;
-  margin: 10px 0;
+  max-height: 150px; /* Empêche l'agrandissement excessif */
+  resize: vertical;
 }
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.modal-footer button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-footer .cancel {
+  background: #ccc;
+}
+
+.modal-footer .confirm {
+  background: #007bff;
+  color: white;
+}
+
+
 .modal-actions {
   display: flex;
   justify-content: space-between;
@@ -170,7 +290,6 @@ export default {
 .modal-actions button:last-child {
   background: #ff6b6b;
 }
-
 .report-button {
   background: #ff6b6b;
   color: white;
@@ -181,21 +300,10 @@ export default {
   cursor: pointer;
   margin-left: 10px;
 }
-
 .report-button:hover {
   background: #e63946;
 }
 
-.forum-stats {
-  font-size: 0.9rem;
-  color: #555;
-  margin-top: 0.5rem;
-}
-.forum-stats {
-  font-size: 0.9rem;
-  color: #444;
-  margin-top: 0.3rem;
-}
 
   .forum-page {
     display: flex;
@@ -249,5 +357,11 @@ export default {
     color: #666;
     margin-top: 0.5rem;
   }
+
+.forum-stats {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 0.5rem;
+}
   </style>
   
