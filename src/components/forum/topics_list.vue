@@ -39,11 +39,6 @@
           <label for="content">Contenu :</label>
           <textarea id="content" v-model="newTopic.content" required></textarea>
 
-          <label for="category">Catégorie :</label>
-          <!-- <select id="category" v-model="newTopic.category" required> -->
-            <!-- <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option> -->
-          <!-- </select> -->
-
           <div class="modal-actions">
             <button type="submit">Créer le sujet</button>
             <button type="button" @click="closeCreateTopicModal">Annuler</button>
@@ -82,7 +77,6 @@ export default {
       newTopic: {
         title: "",
         content: "",
-        category: "",
       },
       categories: [],
     };
@@ -167,7 +161,6 @@ export default {
       this.newTopic = {
         title: "",
         content: "",
-        category: "",
       };
     },
     closeCreateTopicModal() {
@@ -202,7 +195,6 @@ export default {
 </script>
 
 <style scoped>
-/* Style du bouton de création de sujet */
 .create-topic-button {
   background: #1a6f4b;
   color: white;
@@ -213,12 +205,9 @@ export default {
   cursor: pointer;
   margin-bottom: 20px;
 }
-
 .create-topic-button:hover {
   background: #145d36;
 }
-
-/* Modal de création de sujet */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -230,80 +219,73 @@ export default {
   align-items: center;
   justify-content: center;
 }
+.modal-overlay-sujet {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 110vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .modal {
-  background: white;
+  max-width: 600px; /* Limite la largeur */
+  width: 90%; /* S'adapte aux petits écrans */
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  width: 300px;
+  box-sizing: border-box;
+  background: white;
+  border-radius: 8px;
+}
+
+.modal-title {
   text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
 }
 
 .modal input,
 .modal textarea,
 .modal select {
-  width: 100%;
-  margin-bottom: 10px;
+  width: 100%; /* Utilisation de toute la largeur disponible */
   padding: 10px;
-  border-radius: 5px;
+  margin-bottom: 10px;
   border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Empêche le dépassement */
 }
 
-.modal-actions {
-  display: flex;
-  justify-content: space-between;
-}
-
-.modal-actions button {
-  background: #1a6f4b;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.modal-actions button:last-child {
-  background: #ff6b6b;
-}
-
-.report-button {
-  background: #ff6b6b;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  font-size: 0.9rem;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-left: 10px;
-}
-.report-button:hover {
-  background: #e63946;
-}
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  width: 300px;
-  text-align: center;
-}
 .modal textarea {
-  width: 100%;
-  height: 80px;
-  margin: 10px 0;
+  max-height: 150px; /* Empêche l'agrandissement excessif */
+  resize: vertical;
 }
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.modal-footer button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-footer .cancel {
+  background: #ccc;
+}
+
+.modal-footer .confirm {
+  background: #007bff;
+  color: white;
+}
+
+
 .modal-actions {
   display: flex;
   justify-content: space-between;
@@ -318,7 +300,6 @@ export default {
 .modal-actions button:last-child {
   background: #ff6b6b;
 }
-
 .report-button {
   background: #ff6b6b;
   color: white;
@@ -329,21 +310,10 @@ export default {
   cursor: pointer;
   margin-left: 10px;
 }
-
 .report-button:hover {
   background: #e63946;
 }
 
-.forum-stats {
-  font-size: 0.9rem;
-  color: #555;
-  margin-top: 0.5rem;
-}
-.forum-stats {
-  font-size: 0.9rem;
-  color: #444;
-  margin-top: 0.3rem;
-}
 
   .forum-page {
     display: flex;
@@ -397,5 +367,11 @@ export default {
     color: #666;
     margin-top: 0.5rem;
   }
+
+.forum-stats {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 0.5rem;
+}
   </style>
   

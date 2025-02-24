@@ -117,7 +117,6 @@ const routes = [
 
 
 
-
   /*{
     path: "/events",
     name: "EventList",

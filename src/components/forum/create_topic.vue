@@ -13,15 +13,6 @@
           <label for="content">Contenu :</label>
           <textarea id="content" v-model="content" required></textarea>
         </div>
-        
-        <div class="form-group">
-          <label for="category">Catégorie :</label>
-          <select v-model="category" id="category" required>
-            <option v-for="category in categories" :key="category.id" :value="category.id">
-              {{ category.name }}
-            </option>
-          </select>
-        </div>
   
         <button type="submit" class="submit-button">Créer le sujet</button>
       </form>
@@ -37,7 +28,6 @@
       return {
         title: '',
         content: '',
-        category: null,
         categories: [], // Categories for the select dropdown
         message: '',
         messageType: '', // Success or error message class
@@ -72,7 +62,6 @@
             body: JSON.stringify({
               title: this.title,
               content: this.content,
-              category: this.category,
             }),
           });
   
@@ -94,7 +83,6 @@
       resetForm() {
         this.title = '';
         this.content = '';
-        this.category = null;
       }
     }
   };

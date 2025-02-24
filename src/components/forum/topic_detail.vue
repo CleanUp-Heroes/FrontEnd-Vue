@@ -1,60 +1,82 @@
 <template>
-    <div class="forum-page">
-      <h2 class="forum-title">{{ topic.title }}</h2>
-      <p class="forum-meta">
-        Posté par <strong>{{ topic.author }}</strong> - {{ formatDate(topic.created_at) }}
-      </p>
-      
-      <!-- Nouvelle div avec fond commun -->
-      <div class="forum-topic-container">
-        <p class="forum-content">{{ topic.content }}</p>
-  
-        <div class="forum-actions">
-          <button v-if="isAuthenticated" @click="openReportModal('subject', topic.id)" class="report-button">
-            Signaler ce sujet
+  <div class="forum-page">
+    <h2 class="forum-title">{{ topic.title }}</h2>
+    <p class="forum-meta">
+      Posté par <strong>{{ topic.author }}</strong> - {{ formatDate(topic.created_at) }}
+    </p>
+    
+    <div class="forum-topic-container">
+      <p class="forum-content">{{ topic.content }}</p>
+
+      <div class="forum-actions">
+        <!-- <button v-if="isAuthenticated && isAuthor('topic')" @click="openUpdateModal('subject', topic.id)" class="update-button">
+          Mettre à jour le sujet
+        </button> -->
+        <button v-if="isAuthenticated && isAuthor('topic')" @click="deleteItem('subject', topic.id)" class="delete-button">
+          Supprimer le sujet
+        </button>
+        <button v-if="isAuthenticated" @click="openReportModal('subject', topic.id)" class="report-button">
+          Signaler ce sujet
+        </button>
+        <button v-if="isAuthenticated" @click="toggleLike" class="like-button">
+          {{ liked ? "Je n'aime plus" : "J'aime" }} ({{ topic.like_count }})
+        </button>
+      </div>
+    </div>
+
+    <div class="forum-section">
+      <h3 class="forum-subtitle">Réponses</h3>
+      <ul v-if="replies.length > 0" class="forum-list">
+        <li v-for="reply in replies" :key="reply.id" class="forum-item">
+          <p class="forum-reply-content">{{ reply.content }}</p>
+          <span class="forum-meta">Répondu par {{ reply.author }} - {{ formatDate(reply.created_at) }}</span>
+
+          <!-- <button v-if="isAuthenticated && isAuthor('reply', reply)" @click="openUpdateModal('reply', reply.id)" class="update-button">
+            Mettre à jour la réponse
+          </button> -->
+          <button v-if="isAuthenticated && isAuthor('reply', reply)" @click="deleteItem('reply', reply.id)" class="delete-button">
+            Supprimer la réponse
           </button>
-          <button v-if="isAuthenticated" @click="toggleLike" class="like-button">
-            {{ liked ? "Je n'aime plus" : "J'aime" }} ({{ topic.like_count }})
+          <button v-if="isAuthenticated" @click="openReportModal('reply', reply.id)" class="report-button">
+            Signaler cette réponse
           </button>
-        </div>
-      </div>
-  
-      <div class="forum-section">
-        <h3 class="forum-subtitle">Réponses</h3>
-        <ul v-if="replies.length > 0" class="forum-list">
-          <li v-for="reply in replies" :key="reply.id" class="forum-item">
-            <p class="forum-reply-content">{{ reply.content }}</p>
-            <span class="forum-meta">Répondu par {{ reply.author }} - {{ formatDate(reply.created_at) }}</span>
-            
-            <button v-if="isAuthenticated" @click="openReportModal('reply', reply.id)" class="report-button">
-              Signaler cette réponse
-            </button>
-          </li>
-        </ul>
-        <p v-else class="forum-meta">Aucune réponse pour le moment.</p>
-      </div>
-  
-      <div v-if="isAuthenticated" class="forum-section">
-        <h3 class="forum-subtitle">Ajouter une réponse</h3>
-        <textarea v-model="newReply" class="forum-textarea" placeholder="Écrivez votre réponse ici..."></textarea>
-        <button @click="submitReply" class="forum-button">Envoyer</button>
-      </div>
-      <p v-else class="forum-meta">Vous devez être connecté pour répondre.</p>
-  
-      <!-- Modal de signalement -->
-      <div v-if="showReportModal" class="modal-overlay">
-        <div class="modal">
-          <h3>Signaler un {{ reportType === 'subject' ? 'sujet' : 'message' }}</h3>
-          <p>Veuillez indiquer la raison du signalement :</p>
-          <textarea v-model="reportReason" placeholder="Entrez la raison ici..."></textarea>
-          <div class="modal-actions">
-            <button @click="submitReport">Envoyer</button>
-            <button @click="closeReportModal">Annuler</button>
-          </div>
+        </li>
+      </ul>
+      <p v-else class="forum-meta">Aucune réponse pour le moment.</p>
+    </div>
+
+     <!-- Modal de mise à jour -->
+     <div v-if="showUpdateModal" class="modal-overlay">
+      <div class="modal">
+        <h3>Modifier le {{ updateType === 'subject' ? 'sujet' : 'message' }}</h3>
+        <textarea v-model="updatedContent" placeholder="Éditez le contenu ici..."></textarea>
+        <div class="modal-actions">
+          <button @click="submitUpdate">Envoyer</button>
+          <button @click="closeUpdateModal">Annuler</button>
         </div>
       </div>
     </div>
-  </template>  
+
+    <div v-if="isAuthenticated" class="forum-section">
+      <h3 class="forum-subtitle">Ajouter une réponse</h3>
+      <textarea v-model="newReply" class="forum-textarea" placeholder="Écrivez votre réponse ici..."></textarea>
+      <button @click="submitReply" class="forum-button">Envoyer</button>
+    </div>
+    <p v-else class="forum-meta">Vous devez être connecté pour répondre.</p>
+
+    <div v-if="showReportModal" class="modal-overlay">
+      <div class="modal">
+        <h3>Signaler un {{ reportType === 'subject' ? 'sujet' : 'message' }}</h3>
+        <p>Veuillez indiquer la raison du signalement :</p>
+        <textarea v-model="reportReason" placeholder="Entrez la raison ici..."></textarea>
+        <div class="modal-actions">
+          <button @click="submitReport">Envoyer</button>
+          <button @click="closeReportModal">Annuler</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <script>
 export default {
@@ -64,12 +86,11 @@ export default {
       topic: {},
       replies: [],
       newReply: "",
+      updatedContent: "", // Contenu mis à jour
       isAuthenticated: false,
-      liked: false,
-      showReportModal: false,
-      reportReason: "",
-      reportType: "", // 'subject' or 'reply'
-      itemIdToReport: null,
+      showUpdateModal: false,
+      updateType: "", // 'subject' ou 'reply'
+      itemIdToUpdate: null,
     };
   },
   mounted() {
@@ -94,6 +115,32 @@ export default {
         this.liked = this.topic.user_has_liked;
       } catch (error) {
         console.error("Erreur lors du chargement du sujet", error);
+      }
+    },
+    async submitReply() {
+      if (!this.newReply.trim()) {
+        alert("Veuillez entrer une réponse avant d'envoyer.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/forum/topics/${this.id}/replies/add/`, {
+          method: "POST",
+          headers: {
+            "Authorization": localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            reply: this.newReply,
+          }),
+        });
+
+        if (!response.ok) throw new Error("Erreur lors de l'envoi de la réponse");
+
+        this.newReply = ""; // Réinitialise le champ
+        await this.fetchReplies(); // Recharge les réponses après ajout
+      } catch (error) {
+        console.error("Erreur lors de l'envoi de la réponse", error);
       }
     },
     async fetchReplies() {
@@ -177,11 +224,114 @@ export default {
     formatDate(dateString) {
       return new Date(dateString).toLocaleDateString();
     },
+    isAuthor(type, item) {
+      if (type === 'topic') {
+        return this.topic.author === localStorage.getItem("username");
+      } else if (type === 'reply') {
+        return item.author === localStorage.getItem("username");
+      }
+      return false;
+    },
+    openUpdateModal(type, itemId) {
+      this.updateType = type;
+      this.itemIdToUpdate = itemId;
+      if (type === 'subject') {
+        this.updatedContent = this.topic.content; // Charger le contenu du sujet
+      } else {
+        const reply = this.replies.find(reply => reply.id === itemId);
+        this.updatedContent = reply ? reply.content : "";
+      }
+      this.showUpdateModal = true;
+    },
+    // Ferme le modal de mise à jour
+    closeUpdateModal() {
+      this.showUpdateModal = false;
+    },
+    async deleteItem(type, itemId) {
+      const url = type === "subject"
+        ? `http://127.0.0.1:8000/forum/sujet/${itemId}/delete/`
+        : `http://127.0.0.1:8000/forum/reponse/${itemId}/delete/`;
+      try {
+        const response = await fetch(url, {
+          method: "DELETE",
+          headers: {
+            "Authorization": localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) throw new Error("Erreur lors de la suppression");
+
+        if (type === "subject") {
+          this.$router.push("/forum"); // Redirection après suppression du sujet
+        } else {
+          this.fetchReplies(); // Rafraîchir les réponses si une réponse est supprimée
+        }
+      } catch (error) {
+        console.error("Erreur lors de la suppression", error);
+      }
+    },
+    // async submitUpdate() {
+    //   if (!this.updatedContent.trim()) {
+    //     alert("Le contenu ne peut pas être vide.");
+    //     return;
+    //   }
+
+    //   try {
+    //     const url = this.updateType === 'subject'
+    //       ? `http://127.0.0.1:8000/forum/sujet/${this.itemIdToUpdate}/update/`
+    //       : `http://127.0.0.1:8000/forum/reponse/${this.itemIdToUpdate}/update/`;
+
+    //     const response = await fetch(url, {
+    //       method: "PUT",
+    //       headers: {
+    //         "Authorization": localStorage.getItem("token"),
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({
+    //         content: this.updatedContent,
+    //       }),
+    //     });
+
+    //     if (!response.ok) throw new Error("Erreur lors de la mise à jour");
+
+    //     alert("Mise à jour réussie !");
+    //     this.showUpdateModal = false;
+    //     if (this.updateType === 'subject') {
+    //       await this.fetchTopicDetails(); // Recharger le sujet
+    //     } else {
+    //       await this.fetchReplies(); // Recharger les réponses
+    //     }
+    //   } catch (error) {
+    //     console.error("Erreur lors de la mise à jour", error);
+    //   }
+    // },
   },
 };
 </script>
 
 <style scoped>
+.update-button, .delete-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.update-button:hover, .delete-button:hover {
+  background-color: #0056b3;
+}
+
+.delete-button {
+  background-color: #ff6b6b;
+}
+
+.delete-button:hover {
+  background-color: #ff4c4c;
+}
 .modal-overlay {
   position: fixed;
   top: 0;
