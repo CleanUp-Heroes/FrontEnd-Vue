@@ -1,3 +1,4 @@
+
 <template>
     <div class="form-container">
       <div class="challenge-form">
@@ -77,5 +78,71 @@
     color: green;
     font-weight: bold;
   }
-  </style>
+
+
+
+
+
+  .form-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    background-color: #e9f7f6;
+    min-height: 100vh;
+  }
+  
+  .challenge-form {
+    width: 100%;
+    max-width: 800px;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .form-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #1a6f4b;
+  }
+  
+  .event-card {
+    background: #f9f9f9;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .event-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .event-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1a6f4b;
+    margin-bottom: 1rem;
+  }
+  
+  .event-details {
+    font-size: 1rem;
+    color: #3a3a3a;
+    margin: 0.5rem 0;
+  }
+  
+  .status-passed {
+    color: #d9534f;
+    font-weight: bold;
+  }
+  
+  .status-upcoming {
+    color: #5cb85c;
+    font-weight: bold;
+  }
+  </style>  
+
   

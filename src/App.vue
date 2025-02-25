@@ -44,7 +44,7 @@
           <ul v-if="activeMenu === 'events'" class="sub-menu">
             <li><router-link to="/events">Liste des événements</router-link></li>
             <li><router-link to="/events/create">Créer un événement</router-link></li>
-            <li><router-link :to="`/events/1/participate`">Participer à un événement</router-link></li>
+            <!----<li><router-link :to="`/events/1/participate`">Participer à un événement</router-link></li>-->
             <li><router-link to="/events/history">Historique des événements</router-link></li>
           </ul>
         </li>

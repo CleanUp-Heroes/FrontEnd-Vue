@@ -1,9 +1,10 @@
+
 <template>
     <div class="form-container">
       <form @submit.prevent="handleSubmit" class="challenge-form">
         <h2 class="form-title">Créer un événement</h2>
   
-        <!-- Titre de l'événement -->
+        /*Titre de l'événement */
         <div class="form-group">
           <label for="title">Titre de l'événement</label>
           <input
@@ -16,7 +17,7 @@
           <span v-if="errors.title" class="error-message">{{ errors.title }}</span>
         </div>
   
-        <!-- Localisation -->
+        /* Localisation */
         <div class="form-group">
           <label for="location">Localisation</label>
           <input
@@ -29,7 +30,7 @@
           <span v-if="errors.location" class="error-message">{{ errors.location }}</span>
         </div>
   
-        <!-- Date et Heure -->
+        /* Date et Heure */
         <div class="form-group">
           <label for="dateTime">Date et Heure</label>
           <input
@@ -42,7 +43,7 @@
           <span v-if="errors.date_time" class="error-message">{{ errors.date_time }}</span>
         </div>
   
-        <!-- Nombre maximum de participants -->
+        /* Nombre maximum de participants  */
         <div class="form-group">
           <label for="maxParticipants">Nombre maximum de participants</label>
           <input
@@ -55,7 +56,7 @@
           <span v-if="errors.max_participants" class="error-message">{{ errors.max_participants }}</span>
         </div>
   
-        <!-- Description -->
+        /* Description */
         <div class="form-group">
           <label for="description">Description</label>
           <textarea
@@ -66,7 +67,7 @@
           <span v-if="errors.description" class="error-message">{{ errors.description }}</span>
         </div>
   
-        <!-- Bouton de soumission -->
+        /* Bouton de soumission */
         <button type="submit" class="form-button">Créer l'événement</button>
       </form>
     </div>
@@ -210,5 +211,8 @@
   .form-button:hover {
     background-color: #145d3c;
   }
-  </style>
+  </style> 
   
+
+
+ 
