@@ -14,11 +14,10 @@ import ForumTopicDetail from '@/components/forum/topic_detail.vue';
 //import InscriptionParticipation from './components/InscriptionParticipation.vue';
 import { authState } from '@/authState';
 
-//import EventListView from "@/views/EventListView.vue";
-import CreateEventView from "@/views/CreateEventView.vue";
-import ParticipateEventView from "@/views/ParticipateEventView.vue";
-//import HistoryView from "@/views/HistoryView.vue";
-//import HistoryView2 from "@/views/HistoryView2.vue";
+import EventList from "@/components/event/EventList.vue";
+import CreateEvent from "@/components/event/CreateEvent.vue";
+import ParticipateEvent from "@/components/event/ParticipateEvent.vue";
+import HistoryEvent from "@/components/event/HistoryEvent.vue";
 
 // les modules du volontariats
 import RecrutementPage from './components/Volontariat/RecrutementPage.vue';
@@ -117,33 +116,31 @@ const routes = [
 
 
 
-  /*{
+  {
     path: "/events",
     name: "EventList",
-    component: EventListView,
-  },*/
+    component: EventList,
+    meta: { requiresAuth: true },
+  },
   {
     path: "/events/create",
     name: "CreateEvent",
-    component: CreateEventView,
+    component: CreateEvent,
+    meta: { requiresAuth: true },
   },
   {
     path: "/events/:id/participate",
     name: "ParticipateEvent",
-    component: ParticipateEventView,
+    component: ParticipateEvent,
     props: true,
-  },
-  /*{
-    path: "/events/history",
-    name: "History",
-    component: HistoryView,
   },
   {
     path: "/events/history",
     name: "History",
-    component: HistoryView2,
-  },*/
-
+    component: HistoryEvent,
+    meta: { requiresAuth: true },
+  },
+  
 
 ];
 

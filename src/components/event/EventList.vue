@@ -45,7 +45,7 @@
     methods: {
       async fetchEvents() {
         try {
-          const response = await axios.get("http://localhost:8000/api/events/");
+          const response = await axios.get("http://127.0.0.1:8000/create-event/");
           this.events = response.data;
         } catch (error) {
           console.error(error);

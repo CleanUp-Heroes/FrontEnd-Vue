@@ -1,0 +1,15 @@
+@startuml t
+actor Utilisateur
+participant "Formulaire (Vue.js)" as Frontend
+participant "API Backend (Django)" as Backend
+participant "Base de données" as DB
+
+Utilisateur -> Frontend: Remplir le formulaire
+Frontend -> Utilisateur: Validation des champs (erreurs)
+Utilisateur -> Frontend: Soumission du formulaire
+Frontend -> Backend: POST /api/events/ avec les données de l'événement
+Backend -> DB: Enregistrer les données
+DB --> Backend: Confirmation d'enregistrement
+Backend -> Frontend: Succès ou erreur
+Frontend -> Utilisateur: Afficher message de succès ou erreur
+@enduml

@@ -1,22 +1,37 @@
-@startuml participation
-actor Utilisateur
-participant "Frontend (Vue.js)" as Frontend
-participant "Backend (Django API)" as Backend
-participant "Base de données" as Database
+@startuml t
+actor User
+participant Frontend
+participant Backend
+participant Database
 
-Utilisateur -> Frontend: Cliquer sur "Participer au défi"
-Frontend -> Utilisateur: Afficher formulaire de participation
-Utilisateur -> Frontend: Remplir et soumettre le formulaire
-Frontend -> Frontend: Validation locale des champs
-Frontend -> Backend: POST /api/defi/participation (données utilisateur)
-Backend -> Backend: Validation des données
-alt Données valides
-    Backend -> Database: Sauvegarder la participation
-    Database --> Backend: Confirmation
-    Backend -> Frontend: Réponse succès (200 OK)
-    Frontend -> Utilisateur: Afficher message de confirmation
-else Données invalides
-    Backend -> Frontend: Réponse erreur (400 Bad Request)
-    Frontend -> Utilisateur: Afficher message d'erreur
-end
+== Création d'Événements ==
+User -> Frontend: Remplit le formulaire de création
+Frontend -> Backend: Envoie les données du formulaire (POST /events/)
+Backend -> Database: Enregistre l'événement dans la table "events"
+Database --> Backend: Confirmation de l'enregistrement
+Backend --> Frontend: Réponse de succès ou d'erreur
+Frontend --> User: Affiche confirmation ou message d'erreur
+
+== Participation à un Événement ==
+User -> Frontend: Remplit le formulaire de participation
+Frontend -> Backend: Envoie les données de participation (POST /events/participate/)
+Backend -> Database: Enregistre la participation dans la table "participations"
+Database --> Backend: Confirmation de l'enregistrement
+Backend --> Frontend: Réponse de succès ou d'erreur
+Frontend --> User: Affiche confirmation ou message d'erreur
+
+== Affichage des Événements ==
+User -> Frontend: Consulte la liste des événements
+Frontend -> Backend: Demande la liste des événements (GET /events/)
+Backend -> Database: Récupère les événements à venir
+Database --> Backend: Envoie les données des événements
+Backend --> Frontend: Envoie la liste des événements
+Frontend --> User: Affiche la liste des événements
+
+User -> Frontend: Consulte son historique d'événements
+Frontend -> Backend: Demande l'historique des événements (GET /events/history/)
+Backend -> Database: Récupère les événements passés liés à l'utilisateur
+Database --> Backend: Envoie les données de l'historique
+Backend --> Frontend: Envoie l'historique des événements
+Frontend --> User: Affiche l'historique des événements
 @enduml
