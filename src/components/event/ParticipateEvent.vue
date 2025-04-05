@@ -96,7 +96,7 @@ export default {
           `http://127.0.0.1:8000/create-event/${this.selectedEventId}/join/`,
           this.participant,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { 'Authorization': token },
           }
         );
         alert("Inscription réussie !");

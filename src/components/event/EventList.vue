@@ -45,7 +45,11 @@
     methods: {
       async fetchEvents() {
         try {
-          const response = await axios.get("http://127.0.0.1:8000/create-event/");
+          const token = localStorage.getItem("access_token");
+          const response = await axios.get("http://127.0.0.1:8000/create-event/",
+          this.event, {
+            headers: { 'Authorization': token, },
+          });
           this.events = response.data;
         } catch (error) {
           console.error(error);
