@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
     <div class="map-container">
         <button 
       v-if="!isAddingReport" 
@@ -519,3 +520,40 @@ marker.setPopup(popup);
 
   </style>
   
+=======
+  <div id="map" style="height: 500px;"></div>
+</template>
+
+<script>
+import L from "leaflet";
+
+export default {
+  mounted() {
+    this.map = L.map("map").setView([48.8566, 2.3522], 13); // Vue par défaut sur Paris
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(this.map);
+
+    this.loadMarkers();
+  },
+  methods: {
+    async loadMarkers() {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/report/");
+        const data = await response.json();
+        data.forEach((report) => {
+          const marker = L.marker([report.latitude, report.longitude]).addTo(this.map);
+          marker.bindPopup(`<b>${report.description}</b><br>${report.location}`);
+        });
+      } catch (error) {
+        console.error("Erreur lors du chargement des signalements :", error);
+      }
+    },
+  },
+};
+</script>
+
+<style>
+#map {
+  height: 500px;
+}
+</style>
+>>>>>>> 76aa9f2 ( j 'ai ajouté des dossiers : router, views dans le dossier src (dans l'objectif de mettre des fichiers adequats à l'interieur)/ j'ai aussi installer vue-leaftlet important pour le package.jason)
