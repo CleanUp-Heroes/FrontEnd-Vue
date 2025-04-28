@@ -12,6 +12,7 @@
           </button>
           <ul v-if="activeMenu === 'challenges'" class="sub-menu">
             <li><router-link to="/challenges">Tous les défis</router-link></li>
+            <li><router-link to="/challenges">MesParticipations</router-link></li>
           </ul>
         </li>
 
