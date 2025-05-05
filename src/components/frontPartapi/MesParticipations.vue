@@ -77,7 +77,7 @@ export default {
     async fetchParticipations() {
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.get('/api/participations', {
+        const response = await axios.get('challenges/mes_participations', {
           headers: { Authorization: token }
         })
         this.participations = response.data
