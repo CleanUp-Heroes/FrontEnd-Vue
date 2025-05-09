@@ -2,6 +2,7 @@
   <div class="form-container">
     <form @submit.prevent="submitForm" class="challenge-form" enctype="multipart/form-data">
       <h2 class="form-title">Participer au défi {{ this.$route.params.challengeName }}</h2>
+      <p v-if="globalError" class="error-message global-error">{{ globalError }}</p>
 
       <!-- Champ pour saisir la quantité -->
       <div class="form-group">
@@ -66,7 +67,8 @@ export default {
         date: '', // Date de réalisation
         photo: null, // Fichier photo
       },
-      errors: {}, // Objets pour stocker les erreurs de validation
+      errors: {},
+      globalError: '', // 🆕 Pour stocker le message 420
     };
   },
   methods: {
@@ -89,6 +91,7 @@ export default {
       this.form.photo = event.target.files[0];
     },
     async submitForm() {
+      this.globalError = '';
   if (!this.validateForm()) {
     return; // Stoppe la soumission si des erreurs sont présentes
   }
@@ -97,7 +100,7 @@ export default {
   formData.append('quantity', this.form.quantity);
   formData.append('date', this.form.date);
   formData.append('photo', this.form.photo);
-  formData.append('challenge_id', this.$route.params.id); // Ajout de l'ID du défi dans le formData
+ // Ajout de l'ID du défi dans le formData
 
   // Récupération du token depuis le stockage local (ou autre méthode)
   const token = localStorage.getItem('token'); // Remplacez 'auth_token' par le nom exact utilisé
@@ -116,20 +119,29 @@ export default {
       this.$router.push('/challenges'); // Redirige vers la page des défis après soumission
     } else {
       const errorData = await response.json();
-      console.error('Erreur de l’API :', errorData);
-      alert('Une erreur est survenue lors de la soumission.');
+        if (response.status === 420 && errorData?.error) {
+          this.globalError = errorData.error; // 🔥 Affiche le message du back
+        } else if (errorData?.error) {
+          this.globalError = errorData.error;
+        } else {
+          this.globalError = 'Une erreur inconnue est survenue.';
+        } 
+      }
+    } catch (error) {
+      console.error('Erreur réseau :', error);
+      alert('Impossible de contacter le serveur.');
     }
-  } catch (error) {
-    console.error('Erreur réseau :', error);
-    alert('Impossible de contacter le serveur.');
   }
-    },
 
   },
 };
 </script>
 
 <style scoped>
+.global-error {
+  text-align: center;
+  font-weight: bold;
+}
 /* Conteneur général pour centrer le formulaire */
 .form-container {
   display: flex;
