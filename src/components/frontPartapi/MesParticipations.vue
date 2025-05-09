@@ -40,8 +40,17 @@
 
         <!-- Re-soumission si refusée -->
         <div v-if="participation.status === 'Refusé'" class="resubmit-section">
+          <p><strong>Date :</strong> {{ participation.action_date }}</p>
+
+          <label for="quantity">Nouvelle quantité :</label>
+          <input type="number"
+                 v-model="resubmitQuantities[participation.id]"
+                 min="1"
+                 required />
+
           <label for="photo-upload">Nouvelle photo :</label>
           <input type="file" @change="handlePhotoChange($event, participation.id)" />
+
           <button :disabled="isSubmitting[participation.id]" @click="resubmitParticipation(participation.id)">
             {{ isSubmitting[participation.id] ? 'Soumission en cours...' : 'Re-soumettre' }}
           </button>
@@ -61,7 +70,8 @@ export default {
       participations: [],
       selectedChallenge: '',
       newPhotos: {}, // Stockage temporaire des fichiers à soumettre
-      isSubmitting: {}, // Gestion de l'état des boutons
+      resubmitQuantities: {}, // Stockage des nouvelles quantités
+      isSubmitting: {}, // État des boutons de soumission
     }
   },
   computed: {
@@ -77,10 +87,17 @@ export default {
     async fetchParticipations() {
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.get('challenges/mes_participations', {
+        const response = await axios.get('http://127.0.0.1:8000/challenges/mes_participations', {
           headers: { Authorization: token }
         })
         this.participations = response.data
+
+        // Pré-remplir les quantités si statut = Refusé
+        this.participations.forEach(p => {
+          if (p.status === 'Refusé') {
+            this.resubmitQuantities[p.id] = p.action_quantity
+          }
+        })
       } catch (error) {
         console.error('Erreur lors de la récupération des participations :', error)
       }
@@ -90,23 +107,35 @@ export default {
     },
     async resubmitParticipation(participationId) {
       const photo = this.newPhotos[participationId]
-      if (!photo) return alert("Veuillez choisir une photo.")
+      const quantity = this.resubmitQuantities[participationId]
+
+      if (!photo || !quantity) {
+        return alert("Veuillez remplir la quantité et choisir une photo.")
+      }
 
       this.isSubmitting[participationId] = true
       const formData = new FormData()
       formData.append('photo', photo)
+      formData.append('quantity', quantity)
 
       try {
         const token = localStorage.getItem('token')
-        await axios.post(`/api/participations/${participationId}/resubmit`, formData, {
-          headers: {
-            Authorization: token,
-            'Content-Type': 'multipart/form-data'
+
+        // TODO : Remplacer cette URL par celle que Mariama te donnera
+        await axios.post(
+          'http://127.0.0.1:8000/challenges/resoumission',
+          formData,
+          {
+            headers: {
+              Authorization: token,
+              'Content-Type': 'multipart/form-data'
+            }
           }
-        })
+        )
         alert('Participation re-soumise avec succès.')
         this.fetchParticipations()
       } catch (error) {
+        console.error('Erreur re-soumission :', error)
         alert('Erreur lors de la re-soumission.')
       } finally {
         this.isSubmitting[participationId] = false
@@ -145,7 +174,39 @@ export default {
 .pending {
   color: orange;
 }
+
+/* 🔽 AJOUTE CE BLOC POUR LA RE-SOUMISSION */
 .resubmit-section {
-  margin-top: 10px;
+  margin-top: 20px;
+  padding: 15px;
+  border: 2px dashed #ffcccc;
+  background-color: #fff5f5;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(255, 0, 0, 0.1);
+}
+
+.resubmit-section input[type="number"],
+.resubmit-section input[type="file"] {
+  display: block;
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.resubmit-section button {
+  background-color: #e53935;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.resubmit-section button:hover {
+  background-color: #c62828;
 }
 </style>
