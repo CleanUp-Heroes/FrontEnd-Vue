@@ -7,7 +7,11 @@
     <nav>
       <ul class="nav-links">
         <li><router-link to="/Acceuil">Accueil</router-link></li>
+        <li v-if="isModerator">
+          <router-link to="/board_reports">Tableau de bord modération</router-link>
+        </li>
         <li><router-link to="/About">À propos</router-link></li>
+        <li><router-link to="/Forum">Forum</router-link></li>
         <li v-if="authState.isAuthenticated">
           <a @click="handleLogout">Déconnexion</a>
         </li>
@@ -22,26 +26,26 @@
 <script>
 import axios from "axios";
 import { authState, logout, updateAuthState } from '@/authState';
+import { ref, onMounted } from 'vue';
 
 export default {
   name: "AppHeader",
   setup() {
-    // Met à jour l'état d'authentification au démarrage du composant
-    updateAuthState();
+    const isModerator = ref(false);
+
+    onMounted(() => {
+      updateAuthState();
+      isModerator.value = localStorage.getItem("isModerator") === "true"; // Vérification correcte
+    });
 
     const handleLogout = async () => {
       try {
-        // Envoie une requête de déconnexion au backend
         await axios.post("http://127.0.0.1:8000/logout/", {}, {
-          headers: {
-            Authorization: localStorage.getItem("token"),
-          },
+          headers: { Authorization: localStorage.getItem("token") },
         });
-        // Met à jour l'état global
         logout();
-
-        // Redirige l'utilisateur vers la page de connexion
-        window.location.href = "/login"; // Alternative au router pour simplifier
+        localStorage.removeItem("isModerator");
+        window.location.href = "/login";
       } catch (error) {
         console.error("Erreur lors de la déconnexion :", error);
         alert("Erreur lors de la déconnexion. Veuillez réessayer.");
@@ -50,6 +54,7 @@ export default {
 
     return {
       authState,
+      isModerator,
       handleLogout,
     };
   },

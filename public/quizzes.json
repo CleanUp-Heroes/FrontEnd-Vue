@@ -1,0 +1,83 @@
+[
+    {
+      "question": "Où doit-on jeter une bouteille en plastique vide ?",
+      "option_a": "Dans la poubelle verte ♻️",
+      "option_b": "Dans la poubelle jaune 🟡",
+      "option_c": "Dans la poubelle grise ⚫",
+      "option_d": "Dans la poubelle bleue 🔵",
+      "correct_option": "B"
+    },
+    {
+      "question": "Quel déchet ne va PAS dans la poubelle de tri sélectif (jaune) ?",
+      "option_a": "Un carton de pizza gras 🍕",
+      "option_b": "Une bouteille d’eau en plastique 🥤",
+      "option_c": "Une boîte de conserve 🥫",
+      "option_d": "Une brique de lait 🥛",
+      "correct_option": "A"
+    },
+    {
+      "question": "Où doit-on jeter les restes de nourriture ?",
+      "option_a": "Dans la poubelle des ordures ménagères 🗑️",
+      "option_b": "Dans la poubelle jaune 🟡",
+      "option_c": "Dans la poubelle bleue 🔵",
+      "option_d": "Dans la poubelle de verre 🟢",
+      "correct_option": "A"
+    },
+    {
+      "question": "Que faire des piles usagées ?",
+      "option_a": "Les jeter dans la poubelle noire ⚫",
+      "option_b": "Les jeter dans la poubelle jaune 🟡",
+      "option_c": "Les déposer dans un point de collecte spécifique",
+      "option_d": "Les jeter dans l’évier 🚰",
+      "correct_option": "C"
+    },
+    {
+      "question": "Où faut-il jeter un pot de yaourt vide ?",
+      "option_a": "Dans la poubelle jaune 🟡",
+      "option_b": "Dans la poubelle verte 🟢",
+      "option_c": "Dans la poubelle bleue 🔵",
+      "option_d": "Dans un compost 🌱",
+      "correct_option": "A"
+    },
+    {
+      "question": "Que doit-on faire avec les médicaments périmés ?",
+      "option_a": "Les jeter dans la poubelle noire ⚫",
+      "option_b": "Les rapporter à la pharmacie",
+      "option_c": "Les jeter dans les toilettes 🚽",
+      "option_d": "Les enterrer dans le jardin 🌿",
+      "correct_option": "B"
+    },
+    {
+      "question": "Où jeter un pot de confiture en verre ?",
+      "option_a": "Dans la poubelle verte (verre)",
+      "option_b": "Dans la poubelle jaune 🟡",
+      "option_c": "Dans la poubelle noire ⚫",
+      "option_d": "Dans la poubelle bleue 🔵",
+      "correct_option": "A"
+    },
+    {
+      "question": "Comment recycler un vieux vêtement encore en bon état ?",
+      "option_a": "Le jeter dans la poubelle jaune 🟡",
+      "option_b": "Le donner à une association caritative",
+      "option_c": "Le jeter dans la poubelle noire ⚫",
+      "option_d": "Le brûler 🔥",
+      "correct_option": "B"
+    },
+    {
+      "question": "Que faut-il faire avec une boîte de conserve vide ?",
+      "option_a": "La laver et la mettre dans la poubelle jaune",
+      "option_b": "La jeter dans la poubelle noire",
+      "option_c": "La jeter dans un compost",
+      "option_d": "La jeter dans les égouts",
+      "correct_option": "A"
+    },
+    {
+      "question": "Où doit-on jeter un sachet de chips vide ?",
+      "option_a": "Dans la poubelle jaune 🟡",
+      "option_b": "Dans la poubelle noire ⚫",
+      "option_c": "Dans la poubelle bleue 🔵",
+      "option_d": "Dans la poubelle verte 🟢",
+      "correct_option": "B"
+    }
+  ]
+  

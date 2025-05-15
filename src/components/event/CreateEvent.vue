@@ -101,9 +101,9 @@
       async handleSubmit() {
         if (!this.validateForm()) return;
         try {
-          const token = localStorage.getItem("access_token");
-          await axios.post("http://localhost:8000/api/events/", this.event, {
-            headers: { Authorization: `Bearer ${token}` },
+          const token = localStorage.getItem('token');
+          await axios.post("http://127.0.0.1:8000/create-event/", this.event, {
+            headers: { 'Authorization': token, },
           });
           alert("Événement créé avec succès !");
           this.$router.push("/participate-event");
@@ -117,7 +117,7 @@
   </script>
   
   <style scoped>
-  /* Réutilisation des styles donnés */
+  /* Conteneur principal du formulaire */
   .form-container {
     display: flex;
     justify-content: center;
@@ -129,52 +129,70 @@
     box-sizing: border-box;
     overflow: hidden;
   }
+  
+  /* Style du formulaire */
   .challenge-form {
     background: #ffffff;
-    padding: 3rem;
+    padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    width: 90%;
+    width: 100%;
     max-width: 800px;
     box-sizing: border-box;
+    overflow-y: auto; /* Ajoute un défilement si nécessaire */
+    max-height: 90vh; /* Limite la hauteur du formulaire */
   }
+  
+  /* Titre du formulaire */
   .form-title {
     font-size: 2rem;
     font-weight: bold;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     text-align: center;
     color: #1a6f4b;
   }
+  
+  /* Groupes de champs */
   .form-group {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     width: 100%;
   }
+  
+  /* Labels des champs */
   .form-group label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: bold;
     color: #3a3a3a;
   }
+  
+  /* Champs de saisie */
   .form-input {
     width: 100%;
-    height: 3rem;
-    padding: 1rem;
+    height: 2.8rem; /* Taille réduite pour économiser de l'espace */
+    padding: 0.8rem;
     border: 1px solid #c8dad3;
     border-radius: 8px;
-    font-size: 1.1rem;
+    font-size: 1rem;
     display: block;
     margin: 0 auto;
   }
+  
+  /* Effet au focus */
   .form-input:focus {
     border-color: #1a6f4b;
     outline: none;
     box-shadow: 0 0 6px rgba(26, 111, 75, 0.25);
   }
+  
+  /* Messages d'erreur */
   .error-message {
     color: red;
     font-size: 0.9rem;
     margin-top: 0.5rem;
   }
+  
+  /* Bouton de soumission */
   .form-button {
     width: 100%;
     padding: 1rem;
@@ -187,6 +205,8 @@
     cursor: pointer;
     text-transform: uppercase;
   }
+  
+  /* Hover sur le bouton */
   .form-button:hover {
     background-color: #145d3c;
   }
