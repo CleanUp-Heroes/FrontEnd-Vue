@@ -123,7 +123,7 @@ export default {
 
         // TODO : Remplacer cette URL par celle que Mariama te donnera
         await axios.post(
-          'http://127.0.0.1:8000/challenges/resoumission',
+          'http://127.0.0.1:8000/challenges/ressoumision/',
           formData,
           {
             headers: {
