@@ -33,6 +33,29 @@
             {{ participation.status }}
           </span>
           <br />
+
+
+           <!-- ====================  début du bloc ajouté pour la dèrnière feature ==================== -->
+          
+          <!-- On affiche cette section SEULEMENT si le statut est "Validé" -->
+          <div v-if="participation.status === 'Validé'" class="impact-display">
+            
+            <!-- CAS 1 : On a reçu un chiffre pour l'impact -->
+            <div v-if="participation.impact && participation.impact.value !== null" class="impact-success">
+              <strong>Impact :</strong>
+              <span>-{{ participation.impact.value }} {{ participation.impact.unit }} CO₂</span>
+            </div>
+            
+            <!-- CAS 2 : Le statut est validé, mais le calcul est en attente (impact est null) -->
+            <div v-else class="impact-pending">
+              <span>⏳ Calcul de l'impact en cours...</span>
+            </div>
+
+          </div>
+          <!-- ================= FIN DU BLOC AJOUTÉ pour la dèrnière feature ======================= -->
+
+
+
           <div v-if="participation.status === 'Refusé'">
             <strong>Raison :</strong> {{ participation.validation_reason || 'Non précisée' }}
           </div>
@@ -175,7 +198,7 @@ export default {
   color: orange;
 }
 
-/* 🔽 AJOUTE CE BLOC POUR LA RE-SOUMISSION */
+/* BLOC POUR LA RE-SOUMISSION */
 .resubmit-section {
   margin-top: 20px;
   padding: 15px;
@@ -209,4 +232,22 @@ export default {
 .resubmit-section button:hover {
   background-color: #c62828;
 }
+
+
+/*  LES NOUVEAUX STYLES pour impact  */
+
+.impact-display {
+  margin-top: 8px; /* Un peu d'espace */
+}
+
+.impact-success span {
+  color: #27ae60; /* Un joli vert pour la réussite */
+  font-weight: bold;
+}
+
+.impact-pending span {
+  color: #e67e22; /* Un orange pour l'attente */
+  font-style: italic;
+}
+
 </style>

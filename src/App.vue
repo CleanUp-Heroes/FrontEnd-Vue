@@ -13,6 +13,7 @@
           <ul v-if="activeMenu === 'challenges'" class="sub-menu">
             <li><router-link to="/challenges">Tous les défis</router-link></li>
             <li><router-link to="/MesParticipations">MesParticipations</router-link></li>
+            <li><router-link to="/mon-impact">Mon Impact</router-link></li>
           </ul>
         </li>
 

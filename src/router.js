@@ -36,6 +36,7 @@ import ObtentionRecompense from '@/components/QuizEnvironnement/ObtentionRecompe
 import MesParticipations from './components/frontPartapi/MesParticipations.vue';
 
 
+import MonImpact from './components/frontPartapi/MonImpact.vue';
 
 //Vue.use(VueRouter);
 
@@ -43,6 +44,13 @@ import MesParticipations from './components/frontPartapi/MesParticipations.vue';
 const routes = [
 
   // front api
+
+  {
+    path: '/mon-impact',      // L'URL de la page
+    name: 'MonImpact',        // Le nom de la route
+    component: MonImpact      // Le composant Vue à afficher
+  },
+  
 {
   path: '/MesParticipations',
   name: 'MesParticipations',
