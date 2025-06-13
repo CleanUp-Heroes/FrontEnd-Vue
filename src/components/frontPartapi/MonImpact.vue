@@ -1,4 +1,3 @@
-
 <template>
   <div class="impact-page-container">
     <h1>Mon Impact Environnemental</h1>
@@ -21,7 +20,8 @@
       <div class="chart-container">
         <h2>Évolution de votre impact</h2>
         <div class="chart-wrapper">
-          <Bar v-if="chartData.datasets.length" :data="chartData" :options="chartOptions" />
+          <!-- Modification ici : on utilise <line-chart> -->
+          <line-chart v-if="chartData.datasets.length" :data="chartData" :options="chartOptions" />
         </div>
       </div>
     </div>
@@ -29,49 +29,37 @@
 </template>
 
 <script>
-import { Bar } from 'vue-chartjs';
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
+// Modification ici : on importe Line
+import { Line as LineChart } from 'vue-chartjs';
+import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js';
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+// On doit aussi enregistrer les éléments spécifiques à la courbe
+ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
 
 export default {
   name: "MonImpact",
   components: {
-    Bar
+    // Modification ici : on déclare LineChart
+    LineChart
   },
   data() {
     return {
       loading: true,
-      summary: {
-        total: null,
-        unit: 'kg',
-        series: []
-      },
-      chartData: {
-        labels: [],
-        datasets: []
-      },
+      summary: { total: null, unit: 'kg', series: [] },
+      chartData: { labels: [], datasets: [] },
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            display: false
-          }
+          legend: { display: false }
         },
         scales: {
           y: {
             beginAtZero: true,
-            title: {
-              display: true,
-              text: 'kg CO₂ évité'
-            }
+            title: { display: true, text: 'kg CO₂ évité' }
           },
           x: {
-            title: {
-              display: true,
-              text: 'Date de la participation'
-            }
+            title: { display: true, text: 'Date de la participation' }
           }
         }
       }
@@ -81,13 +69,17 @@ export default {
     fetchImpactSummary() {
       this.loading = true;
       
-      // Simulation des données du back-end
-      // Ces données sont cohérentes avec le mock de MesParticipations.vue
+      // On ajoute plus de points pour que la courbe soit plus intéressante
       const mockSummary = {
-        total: 2.89, // Total des impacts calculés (un seul dans notre mock)
+        total: 42.3, 
         unit: "kg",
         series: [
-          { "date": "2024-07-20", "kg": 2.89 }
+          { "date": "2024-06-10", "kg": 1.68 },
+          { "date": "2024-06-18", "kg": 5.40 },
+          { "date": "2024-06-25", "kg": 2.10 },
+          { "date": "2024-07-02", "kg": 11.50 },
+          { "date": "2024-07-11", "kg": 8.20 },
+          { "date": "2024-07-20", "kg": 13.42 }
         ]
       };
 
@@ -106,10 +98,13 @@ export default {
         datasets: [
           {
             label: 'Impact CO₂ évité (en kg)',
-            backgroundColor: '#27ae60',
-            borderColor: '#2ecc71',
-            borderWidth: 1,
-            borderRadius: 4,
+            // Styles pour une belle courbe
+            backgroundColor: 'rgba(39, 174, 96, 0.2)', // Couleur de remplissage sous la courbe
+            borderColor: '#27ae60', // Couleur de la ligne
+            tension: 0.1, // Pour une courbe légèrement arrondie
+            fill: true, // Pour activer le remplissage
+            pointBackgroundColor: '#27ae60',
+            pointRadius: 5,
             data: data
           }
         ]
@@ -123,6 +118,7 @@ export default {
 </script>
 
 <style scoped>
+/* Les styles restent les mêmes, ils sont déjà parfaits pour ça */
 .impact-page-container {
   max-width: 800px;
   margin: 2rem auto;
@@ -152,7 +148,7 @@ export default {
 
 .chart-wrapper {
   position: relative;
-  height: 400px; /* Hauteur fixe pour le graphique */
+  height: 400px;
 }
 
 .loading-message {
