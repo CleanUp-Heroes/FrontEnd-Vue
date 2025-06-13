@@ -12,6 +12,8 @@
           </button>
           <ul v-if="activeMenu === 'challenges'" class="sub-menu">
             <li><router-link to="/challenges">Tous les défis</router-link></li>
+            <li><router-link to="/MesParticipations">MesParticipations</router-link></li>
+            <li><router-link to="/mon-impact">Mon Impact</router-link></li>
           </ul>
         </li>
 
@@ -78,6 +80,8 @@
   <ul :class="{'sub-menu': true, 'active': activeMenu === 'QuizEnvironnementaux'}">
     <li><router-link to="/participer-quiz">Participer au Quiz</router-link></li>
     <li><router-link to="/obtention-recompense">Obtention de la Récompense</router-link></li>
+
+    
   </ul>
 </li>
 

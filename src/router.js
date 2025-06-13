@@ -33,10 +33,30 @@ import BoardModerator from './components/forum/boards_moderators.vue';
 import QuizComponent from './components/QuizEnvironnement/QuizComponent.vue';
 import ObtentionRecompense from '@/components/QuizEnvironnement/ObtentionRecompense.vue';
 
+import MesParticipations from './components/frontPartapi/MesParticipations.vue';
+
+
+import MonImpact from './components/frontPartapi/MonImpact.vue';
+
 //Vue.use(VueRouter);
 
 
 const routes = [
+
+  // front api
+
+  {
+    path: '/mon-impact',      // L'URL de la page
+    name: 'MonImpact',        // Le nom de la route
+    component: MonImpact      // Le composant Vue à afficher
+  },
+  
+{
+  path: '/MesParticipations',
+  name: 'MesParticipations',
+  component: MesParticipations
+},
+
 
   {path: '/participer-quiz',
     name: 'Participer au Quiz',
